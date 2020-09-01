@@ -1,0 +1,8 @@
+.dashboardBox {
+	width: 100%;
+	display: block;
+	height: 350px;
+	border: 1px solid lightblue;
+	border-radius: 10px;
+	margin: 10px;
+}

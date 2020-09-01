@@ -1,0 +1,13 @@
+﻿{
+	"connectionString": "mongodb+srv://tarekda:tarek1234@cluster0.sn9ey.mongodb.net/xnetbilling?retryWrites=true&w=majority",
+	"secret": "my-secret-yara",
+	"emailFrom": "tare2.da@gmail.com",
+	"smtpOptions": {
+		"host": "smtp.ethereal.email",
+		"port": 587,
+		"auth": {
+			"user": "flo75@ethereal.email",
+			"pass": "vtWdR33DwCKj3pUH2n"
+		}
+	}
+}
