@@ -13,6 +13,7 @@ export const ispService = {
   createUser,
   updateUser,
   deleteUser,
+  getAllPackages,
 };
 
 function getAllUsers() {
@@ -37,4 +38,8 @@ function deleteUser(id) {
   return fetchWrapper.delete(`${baseUrl}/users/${id}`).then((res) => {
     return res;
   });
+}
+
+function getAllPackages() {
+  return fetchWrapper.get(`${baseUrl}/packages`);
 }

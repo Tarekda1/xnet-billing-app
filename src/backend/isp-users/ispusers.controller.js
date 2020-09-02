@@ -14,7 +14,7 @@ router.get("/users/:id", authorize(), getById);
 router.post("/users/", authorize(Role.Admin), createSchema, createUser);
 router.put("/users/:id", authorize(), updateSchema, update);
 router.delete("/users/:id", authorize(), _delete);
-router.get("/packages/", authorize(Role.Admin), getAllPackages);
+router.get("/packages", authorize(Role.Admin), getAllPackages);
 router.post(
   "/packages/",
   authorize(Role.Admin),
