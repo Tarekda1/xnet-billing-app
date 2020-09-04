@@ -3,6 +3,7 @@ import types from "@/actions/types";
 const initialState = {
   users: [],
   packages: [],
+  userAccounts: [],
 };
 
 export default (state = initialState, action) => {
@@ -15,6 +16,8 @@ export default (state = initialState, action) => {
     case types.LOAD_PACKAGES:
       console.log(`payload`);
       return { ...state, packages: payload };
+    case types.LOAD_INTERNET_USER_ACCOUNTS:
+      return { ...state, userAccounts: payload };
     default:
       return state;
   }

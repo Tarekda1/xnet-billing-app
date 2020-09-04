@@ -1,0 +1,19 @@
+.toolbar {
+  border: none !important;
+  border-bottom: 1px solid lightgray !important;
+  display: inline-block;
+  width: 100%;
+  box-shadow: none !important ;
+  border-radius: 0 !important;
+}
+
+.toolbar__header {
+  margin: 5px auto !important;
+}
+
+.Segment__noBorder {
+  border: none !important;
+  display: inline-block;
+  width: 100%;
+  box-shadow: none !important ;
+}

@@ -14,10 +14,17 @@ export const ispService = {
   updateUser,
   deleteUser,
   getAllPackages,
+  createPackage,
+  createUserAccount,
+  getAllUserAccounts,
 };
 
 function getAllUsers() {
   return fetchWrapper.get(`${baseUrl}/users`);
+}
+
+function getAllUserAccounts() {
+  return fetchWrapper.get(`${baseUrl}/accounting`);
 }
 
 function getUserById(id) {
@@ -26,6 +33,13 @@ function getUserById(id) {
 
 function createUser(params) {
   return fetchWrapper.post(`${baseUrl}/users`, params);
+}
+function createUserAccount(params) {
+  return fetchWrapper.post(`${baseUrl}/accounting/`, params);
+}
+
+function createPackage(params) {
+  return fetchWrapper.post(`${baseUrl}/packages`, params);
 }
 
 function updateUser(id, params) {

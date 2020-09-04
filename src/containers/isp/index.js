@@ -16,7 +16,10 @@ function ISP(props) {
   console.log(path);
 
   return (
-    <div className="container">
+    <div
+      className="container"
+      style={{ overflow: "auto", overflowY: "scroll" }}
+    >
       <div className="row">
         <div className="col-sm-8 offset-sm-2 mt-5">
           <div className="card m-3">
@@ -24,7 +27,7 @@ function ISP(props) {
               <Route exact path={`${path}/`} component={Users} />
               <Route path={`${path}/users`} component={Users} />
               <Route path={`${path}/package`} component={Package} />
-              <Route path={`${path}/billing`} component={Billing} />
+              <Route path={`${path}/accounting`} component={Billing} />
             </Switch>
           </div>
         </div>

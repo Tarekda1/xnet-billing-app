@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const sendEmail = require("_helpers/send-email");
 const db = require("_helpers/db");
 const Role = require("_helpers/role");
+const moment = require("moment");
 
 module.exports = {
   getAll,
@@ -16,6 +17,8 @@ module.exports = {
   getAllPackages,
   updatePackage,
   deletePackage,
+  getAllUserAccounts,
+  createUserAccount,
 };
 
 async function create(params) {
@@ -23,7 +26,7 @@ async function create(params) {
   if (await db.User.findOne({ username: params.username })) {
     throw 'Username "' + params.username + '" is already added';
   }
-  console.log(params);
+  //console.log(params);
   const user = new db.User(params);
 
   // hash password
@@ -49,9 +52,42 @@ async function createPackage(params) {
   return basicPackageDetails(package);
 }
 
-function basicPackageDetails(user) {
-  const { id, displayName, created, updated } = user;
+async function createUserAccount(params) {
+  console.log(`today: ${params.billDate}`);
+  // validate
+  const userAcc = await db.UserAccount.findOne({
+    user: params.user,
+    billDate: params.billDate,
+  });
+
+  if (
+    userAcc &&
+    userAcc.billDate &&
+    userAcc.billDate.getMonth() == params.billDate.getMonth() &&
+    userAcc.billDate.getYear() == params.billDate.getYear()
+  ) {
+    throw (
+      'User for this billDate:"' +
+      moment(params.billDate, "DD-MM-YYYY") +
+      '" is already added'
+    );
+  }
+  const user = new db.UserAccount(params);
+
+  // save account
+  await user.save();
+
+  return basicAccountDetails(user);
+}
+
+function basicPackageDetails(package) {
+  const { id, displayName, created, updated } = package;
   return { id, displayName, created, updated };
+}
+
+function basicAccountDetails(userAccount) {
+  const { user, amount, comment, paid, billDate } = userAccount;
+  return { user, amount, comment, paid, billDate };
 }
 
 function basicDetails(user) {
@@ -84,6 +120,11 @@ function basicDetails(user) {
 async function getAll() {
   const users = await db.User.find({}).populate("package");
   return users.map((x) => basicDetails(x));
+}
+
+async function getAllUserAccounts() {
+  const users = await db.UserAccount.find({}).populate("user");
+  return users.map((x) => basicAccountDetails(x));
 }
 
 async function getAllPackages() {

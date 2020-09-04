@@ -11,15 +11,18 @@ import {
   Button,
 } from "semantic-ui-react";
 import AddUserModel from "@/_components/ui/add_user_model/AddUserModel";
+import AddPackageModal from "@/_components/ui/add_package_modal/AddPackageModal";
 
 const Users = () => {
   const users = useSelector((state) => state.isp.users);
   const [showUserModel, setShowUserModel] = useState(false);
+  const [showPackageModel, setShowPackageModel] = useState(false);
   const dispatch = useDispatch();
   const tableHeader = [
     "First Name",
     "Last Name",
     "Phone Number",
+    "Profile",
     "Address",
     "Created At",
   ];
@@ -30,8 +33,13 @@ const Users = () => {
     return () => {};
   }, []);
 
-  const onSubmit = (e) => {
+  const onSubmit = () => {
     setShowUserModel(false);
+    dispatch(globalActions.fetchInternetUsers());
+  };
+
+  const onPackageSubmit = () => {
+    setShowPackageModel(false);
   };
 
   return (
@@ -42,7 +50,9 @@ const Users = () => {
             <Header as="h1"> Xnet ISP Users</Header>
           </Grid.Column>
           <Grid.Column floated="right" width={12}>
-            <Button floated="right">Add Package</Button>
+            <Button floated="right" onClick={() => setShowPackageModel(true)}>
+              Add Package
+            </Button>
             <Button floated="right" onClick={() => setShowUserModel(true)}>
               Add User
             </Button>
@@ -51,6 +61,13 @@ const Users = () => {
               onSubmit={onSubmit}
               onClose={() => {
                 setShowUserModel(false);
+              }}
+            />
+            <AddPackageModal
+              open={showPackageModel}
+              onSubmit={onPackageSubmit}
+              onClose={() => {
+                setShowPackageModel(false);
               }}
             />
           </Grid.Column>
@@ -71,6 +88,9 @@ const Users = () => {
                 <Table.Cell>{user.firstName}</Table.Cell>
                 <Table.Cell>{user.lastName}</Table.Cell>
                 <Table.Cell>{user.phoneNumber}</Table.Cell>
+                <Table.Cell>
+                  {user.package ? user.package.displayName : "N/A"}
+                </Table.Cell>
                 <Table.Cell>{user.address}</Table.Cell>
                 <Table.Cell>{user.created}</Table.Cell>
               </Table.Row>

@@ -6,9 +6,8 @@ const validateRequest = require("_middleware/validate-request");
 const authorize = require("_middleware/authorize");
 const Role = require("_helpers/role");
 const ispUsersService = require("./ispusers.service");
+const { func } = require("prop-types");
 
-// router.post('/add-user', authorize(Role.Admin), UserSchema, addUser);
-// router.post('/update-user', authorize(Role.Admin), UserSchema, updateUser);
 router.get("/users", authorize(Role.Admin), getAll);
 router.get("/users/:id", authorize(), getById);
 router.post("/users/", authorize(Role.Admin), createSchema, createUser);
@@ -24,6 +23,15 @@ router.post(
 router.get("/packages/:id", authorize(), getPackageById);
 router.put("/packages/:id", authorize(), updatePackageSchema, updatePackage);
 router.delete("/packages/:id", authorize(), deletePackage);
+router.get("/accounting", authorize(Role.Admin), getAllUserAccounts);
+router.post(
+  "/accounting/",
+  authorize(Role.Admin),
+  createUserAccountSchema,
+  createUserAccount
+);
+//todo
+//Generate UserAccount from users table
 
 module.exports = router;
 
@@ -37,6 +45,16 @@ function createSchema(req, res, next) {
     password: Joi.string().required(),
     username: Joi.string().required(),
     package: Joi.objectId().required(),
+  });
+  validateRequest(req, next, schema);
+}
+
+function createUserAccountSchema(req, res, next) {
+  const schema = Joi.object({
+    user: Joi.objectId().required(),
+    amount: Joi.number().required(),
+    comment: Joi.string().required(),
+    billDate: Joi.date(),
   });
   validateRequest(req, next, schema);
 }
@@ -82,9 +100,17 @@ function updatePackageSchema(req, res, next) {
 }
 
 function createUser(req, res, next) {
-  console.log(req.body);
+  //console.log(req.body);
   ispUsersService
     .create(req.body)
+    .then(() => res.json({ message: "Successfully added user" }))
+    .catch(next);
+}
+
+function createUserAccount(req, res, next) {
+  console.log(`adding user account: ${req.body}`);
+  ispUsersService
+    .createUserAccount(req.body)
     .then(() => res.json({ message: "Successfully added user" }))
     .catch(next);
 }
@@ -101,6 +127,13 @@ function getAll(req, res, next) {
   ispUsersService
     .getAll()
     .then((users) => res.json(users))
+    .catch(next);
+}
+
+function getAllUserAccounts(req, res, next) {
+  ispUsersService
+    .getAllUserAccounts()
+    .then((userAccounts) => res.json(userAccounts))
     .catch(next);
 }
 

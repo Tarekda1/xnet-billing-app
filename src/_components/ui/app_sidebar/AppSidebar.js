@@ -16,23 +16,7 @@ function AppSidebar(props) {
   const user = useSelector((state) => state.user.userInfo);
   const token = useSelector((state) => state.user.token);
   const dispatch = useDispatch();
-  console.log(token);
-  //const language = useSelector((state) => state.global.language);
-  // const user = useSelector((state) => state.user.info);
-  // const { t } = useTranslation();
-
-  // let user;
-  // try {
-  // 	let tempUser = localStorage.getItem('user');
-  // 	if (tempUser !== '') {
-  // 		tempUser = JSON.parse(localStorage.getItem('user'));
-  // 		user = tempUser;
-  // 	}
-  // } catch (err) {
-  // 	user = null;
-  // }
-  // // only show nav when logged in
-  // if (!user) return null;
+  //console.log(token);
 
   return token ? (
     <Sidebar.Pushable>
@@ -67,6 +51,10 @@ function AppSidebar(props) {
         <Menu.Item as="a" onClick={() => history.push("/isp-users/users")}>
           <Icon name="users" />
           Internet Users
+        </Menu.Item>
+        <Menu.Item as="a" onClick={() => history.push("/isp-users/accounting")}>
+          <Icon name="calculator" />
+          Accounting
         </Menu.Item>
         <Menu.Item
           as="a"

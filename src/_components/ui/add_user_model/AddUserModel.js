@@ -12,7 +12,6 @@ import {
 } from "semantic-ui-react";
 import { ispService } from "@/_services/";
 const AddUserModel = ({ open, onSubmit, onClose }) => {
-  const [showModel, setshowModel] = useState(true);
   const [packages, setpackages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -66,11 +65,7 @@ const AddUserModel = ({ open, onSubmit, onClose }) => {
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={() => setshowModel(false)}
-      onOpen={() => setshowModel(true)}
-    >
+    <Modal open={open}>
       <Header>Add User</Header>
       <Modal.Content>
         <Form>
