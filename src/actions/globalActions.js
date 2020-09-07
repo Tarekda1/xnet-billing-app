@@ -56,6 +56,14 @@ const globalActions = {
       return dispatch(globalActions.loadInternetUserAccounts(data));
     };
   },
+  updateUserAcc: (id, userAcc) => {
+    return async (dispatch, getState) => {
+      console.log(id);
+      await ispService.updateUserAcc(id, userAcc);
+      //console.log(data);
+      dispatch(globalActions.fetchInternetUserAccounts());
+    };
+  },
 };
 
 export { globalActions };

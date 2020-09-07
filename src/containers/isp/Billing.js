@@ -7,18 +7,26 @@ import {
   Button,
   List,
   Table,
+  Icon,
+  Checkbox,
 } from "semantic-ui-react";
 import "./billing.css";
-import AddUserAccountModal from "../../_components/ui/add_user_account_modal/AddUserAccountModal";
+import AddUserAccountModal from "@/_components/ui/add_user_account_modal/AddUserAccountModal";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "@/actions/globalActions";
-import { ispService } from "../../_services/isp.service";
+import { ispService } from "@/_services/isp.service";
 import { func } from "prop-types";
 
-export const Billing = () => {
+export const Billing = ({ match }) => {
   const dispatch = useDispatch();
+  const { path } = match;
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const userAccounts = useSelector((state) => state.isp.userAccounts);
+  //const [showEditModel, setShowEditModel] = useState(false);
+  const [selectUserAcc, setSelectedUserAcc] = useState({});
+  const [isEdit, setIsEdit] = useState(false);
   const onAddUserAccModalClose = () => {
     setOpenAddModal(false);
   };
@@ -28,21 +36,42 @@ export const Billing = () => {
     dispatch(globalActions.fetchInternetUserAccounts());
   };
 
+  const onEditUserAccModal = (id) => {
+    const userAcc = userAccounts.filter((ua) => ua.id === id)[0];
+    setIsEdit(true);
+    setSelectedUserAcc(userAcc);
+    setOpenAddModal(true);
+  };
+
   useEffect(() => {
     console.log("fetching user accounts");
     dispatch(globalActions.fetchInternetUserAccounts());
     return () => {};
   }, []);
 
+  const deleteUserAcc = (e) => {};
+
+  const onPaidChecked = (e, id) => {
+    console.log("updating use account");
+    console.log(e.checked);
+    console.log(id);
+    const userAcc = userAccounts.filter((ua) => ua.id === id)[0];
+    console.log(userAcc);
+    const userAccPost = {
+      paid: e.checked,
+      comment: userAcc.comment,
+      billDate: userAcc.billDate,
+    };
+    if (userAcc) dispatch(globalActions.updateUserAcc(id, userAccPost));
+  };
+
   const tableHeader = [
     "First Name",
     "Last Name",
     "Phone Number",
-    "Profile",
-    "Address",
-    "paid",
-    "amount",
-    "comment",
+    "Paid",
+    "Amount",
+    "Comment",
     "Month Bill Date",
   ];
 
@@ -74,6 +103,8 @@ export const Billing = () => {
               open={openAddModal}
               onClose={onAddUserAccModalClose}
               onSubmit={onSubmitAddUserAccModel}
+              userAcc={selectUserAcc}
+              edit={isEdit}
             />
           </List.Item>
         </List>
@@ -96,27 +127,57 @@ export const Billing = () => {
                     firstName,
                     lastName,
                     phoneNumber,
-                    package: profile,
                     address: userAddress,
                   },
                   comment,
                   paid,
                   amount,
                   billDate,
+                  id,
                 },
                 index
               ) => {
                 return (
-                  <Table.Row key={index}>
+                  <Table.Row className="useraccounts" key={index}>
                     <Table.Cell>{firstName}</Table.Cell>
                     <Table.Cell>{lastName}</Table.Cell>
                     <Table.Cell>{phoneNumber}</Table.Cell>
-                    <Table.Cell>{profile}</Table.Cell>
-                    <Table.Cell>{userAddress}</Table.Cell>
-                    <Table.Cell>{paid ? "Yes" : "Not yet"}</Table.Cell>
+                    {/* <Table.Cell>{profile}</Table.Cell> */}
+                    <Table.Cell>
+                      <Checkbox
+                        name="paid"
+                        onChange={(e, event) => onPaidChecked(event, id)}
+                        toggle
+                        checked={paid}
+                      />
+                    </Table.Cell>
                     <Table.Cell>{amount}</Table.Cell>
                     <Table.Cell>{comment}</Table.Cell>
                     <Table.Cell>{billDate}</Table.Cell>
+                    <Table.Cell tyle={{ whiteSpace: "nowrap" }}>
+                      <div style={{ display: "flex", flexDirection: "row" }}>
+                        <Button
+                          icon
+                          primary
+                          onClick={() => onEditUserAccModal(id)}
+                          className="btn btn-sm btn-primary mr-1"
+                        >
+                          <Icon name="edit" />
+                        </Button>
+                        <Button
+                          onClick={(id) => deleteUserAcc(id)}
+                          icon
+                          className="useraccounts__button useraccounts__button-delete"
+                          disabled={isDeleting}
+                        >
+                          {isDeleting ? (
+                            <span className="spinner-border spinner-border-sm" />
+                          ) : (
+                            <Icon name="user delete" />
+                          )}
+                        </Button>
+                      </div>
+                    </Table.Cell>
                   </Table.Row>
                 );
               }

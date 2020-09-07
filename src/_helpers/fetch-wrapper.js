@@ -1,4 +1,4 @@
-//import config from 'config';
+import config from "config";
 import { accountService } from "@/_services";
 
 export const fetchWrapper = {
@@ -8,9 +8,9 @@ export const fetchWrapper = {
   delete: _delete,
 };
 
-const config = {
-  apiUrl: "http://localhost:4000",
-};
+// const config = {
+//   apiUrl: "http://localhost:",
+// };
 
 function get(url) {
   const requestOptions = {

@@ -17,6 +17,7 @@ export const ispService = {
   createPackage,
   createUserAccount,
   getAllUserAccounts,
+  updateUserAcc,
 };
 
 function getAllUsers() {
@@ -46,6 +47,14 @@ function updateUser(id, params) {
   return fetchWrapper.put(`${baseUrl}/users/${id}`, params).then((user) => {
     return user;
   });
+}
+
+function updateUserAcc(id, params) {
+  return fetchWrapper
+    .put(`${baseUrl}/accounting/${id}`, params)
+    .then((userAcc) => {
+      return userAcc;
+    });
 }
 
 function deleteUser(id) {

@@ -19,6 +19,8 @@ module.exports = {
   deletePackage,
   getAllUserAccounts,
   createUserAccount,
+  updateUserAccount,
+  getUserAccById,
 };
 
 async function create(params) {
@@ -86,8 +88,9 @@ function basicPackageDetails(package) {
 }
 
 function basicAccountDetails(userAccount) {
-  const { user, amount, comment, paid, billDate } = userAccount;
-  return { user, amount, comment, paid, billDate };
+  console.log(userAccount);
+  const { user, amount, comment, paid, billDate, id } = userAccount;
+  return { user, amount, comment, paid, billDate, id };
 }
 
 function basicDetails(user) {
@@ -123,8 +126,22 @@ async function getAll() {
 }
 
 async function getAllUserAccounts() {
-  const users = await db.UserAccount.find({}).populate("user");
-  return users.map((x) => basicAccountDetails(x));
+  const users = await db.UserAccount.find()
+    .populate("user")
+    .populate("package");
+  return users.map((x) => {
+    console.log(`usercc ${x}`);
+    return basicAccountDetails(x);
+  });
+}
+
+async function getUserAccById(id) {
+  if (!db.isValidId(id)) throw "UserAcc not found";
+  const userAcc = await db.UserAccount.findById(id)
+    .populate("user")
+    .populate("package");
+  if (!userAcc) throw "User account not found";
+  return userAcc;
 }
 
 async function getAllPackages() {
@@ -173,6 +190,20 @@ async function update(id, params) {
   await user.save();
 
   return basicDetails(user);
+}
+
+async function updateUserAccount(id, params) {
+  const userAcc = await getUserAccById(id);
+  console.log(userAcc);
+  console.log(`params: ${params.paid}`);
+  // copy params to account and save
+  Object.assign(userAcc, params);
+  userAcc.paid = params.paid;
+  userAcc.amount = Number(params.amount);
+  userAcc.updated = Date.now();
+  await userAcc.save();
+
+  return basicAccountDetails(userAcc);
 }
 
 async function updatePackage(id, params) {

@@ -30,6 +30,13 @@ router.post(
   createUserAccountSchema,
   createUserAccount
 );
+router.put(
+  "/accounting/:id",
+  authorize(),
+  updateUserAccSchema,
+  updateUserAccount
+);
+
 //todo
 //Generate UserAccount from users table
 
@@ -82,6 +89,18 @@ function updateSchema(req, res, next) {
   }
 
   const schema = Joi.object(schemaRules); //.with('password', 'confirmPassword');
+  validateRequest(req, next, schema);
+}
+
+function updateUserAccSchema(req, res, next) {
+  const schemaRules = {
+    comment: Joi.string().empty(""),
+    amount: Joi.number().empty(),
+    paid: Joi.boolean().empty(),
+    billDate: Joi.date().empty(),
+  };
+
+  const schema = Joi.object(schemaRules);
   validateRequest(req, next, schema);
 }
 
@@ -188,6 +207,18 @@ function updatePackage(req, res, next) {
   ispUsersService
     .updatePackage(req.params.id, req.body)
     .then((pkg) => res.json(pkg))
+    .catch(next);
+}
+
+function updateUserAccount(req, res, next) {
+  // users can update their own account and admins can update any account
+  if (req.user.role !== Role.Admin) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  console.log(`req.body ${req.body.paid}`);
+  ispUsersService
+    .updateUserAccount(req.params.id, req.body)
+    .then((userAcc) => res.json(userAcc))
     .catch(next);
 }
 

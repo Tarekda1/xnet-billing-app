@@ -31,7 +31,7 @@ const Users = () => {
     console.log("fetching users");
     dispatch(globalActions.fetchInternetUsers());
     return () => {};
-  }, []);
+  }, [users.dispatch]);
 
   const onSubmit = () => {
     setShowUserModel(false);

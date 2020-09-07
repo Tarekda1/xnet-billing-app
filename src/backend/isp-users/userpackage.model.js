@@ -8,10 +8,11 @@ const schema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  amount: { type: Number },
+  amount: { type: Number, default: 50000 },
   comment: { type: String },
   paid: { type: Boolean, default: false },
   billDate: { type: Date, default: Date.now },
+  updated: { type: Date },
 });
 
 schema.virtual("hasPaid").get(function () {

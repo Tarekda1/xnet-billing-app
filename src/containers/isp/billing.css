@@ -17,3 +17,8 @@
   width: 100%;
   box-shadow: none !important ;
 }
+
+.useraccounts__button-delete {
+  background-color: red !important;
+  color: white !important;
+}

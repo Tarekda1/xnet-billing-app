@@ -40,7 +40,8 @@ const AddUserModel = ({ open, onSubmit, onClose }) => {
 
   useEffect(() => {
     fetchPackages();
-  }, [fetchPackages]);
+    return () => {};
+  }, []);
 
   const fillEntity = (key, value) => {
     setFormData({ ...formData, [key]: value });

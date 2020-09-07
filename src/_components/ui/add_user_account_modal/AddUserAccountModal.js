@@ -9,11 +9,12 @@ import {
   Checkbox,
   Grid,
   Dropdown,
+  Icon,
 } from "semantic-ui-react";
 import { ispService } from "@/_services/";
 import { formatDate } from "@/_helpers/utility";
 
-const AddUserAccountModel = ({ open, onSubmit, onClose }) => {
+const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
   //onst [showModel, setshowModel] = useState(true);
   const mountedRef = useRef(true);
   const [usersData, setUsersData] = useState([]);
@@ -35,6 +36,16 @@ const AddUserAccountModel = ({ open, onSubmit, onClose }) => {
     }));
     if (mountedRef.current) {
       setUsersData(usersData);
+      console.log(`userAcc: ${userAcc}`);
+      console.log(`edit: ${edit}`);
+      if (userAcc && edit) {
+        setFormData({
+          user: userAcc.user,
+          paid: userAcc.paid,
+          comment: userAcc.comment,
+          amount: Number(userAcc.amount),
+        });
+      }
       setLoading(false);
     }
   };
@@ -45,7 +56,7 @@ const AddUserAccountModel = ({ open, onSubmit, onClose }) => {
     return () => {
       mountedRef.current = false;
     };
-  }, [fetchUsers]);
+  }, [userAcc, edit]);
 
   const fillEntity = (key, value) => {
     console.log(key);
@@ -66,7 +77,11 @@ const AddUserAccountModel = ({ open, onSubmit, onClose }) => {
       console.log(formatedDate);
       const body = { ...formData, billDate: formatedDate };
       console.log(`body: ${JSON.stringify(body)}`);
-      await ispService.createUserAccount(body);
+      if (edit) {
+        await ispService.updateUserAcc(userAcc.id, body);
+      } else {
+        await ispService.createUserAccount(body);
+      }
       setSubmitting(false);
       onSubmit();
     } catch (err) {
@@ -77,7 +92,11 @@ const AddUserAccountModel = ({ open, onSubmit, onClose }) => {
 
   return (
     <Modal open={open}>
-      <Header>Add User</Header>
+      <Header>
+        {edit
+          ? `${userAcc.user.firstName} ${userAcc.user.lastName}`
+          : "Add User"}
+      </Header>
       <Modal.Content>
         <Form>
           <Grid>
@@ -88,6 +107,8 @@ const AddUserAccountModel = ({ open, onSubmit, onClose }) => {
                     fluid
                     loading={loading}
                     label="User"
+                    disabled={!edit}
+                    defaultValue={edit ? userAcc.user.id : ""}
                     options={usersData}
                     placeholder="Select User"
                     onChange={handlechange}
@@ -97,6 +118,8 @@ const AddUserAccountModel = ({ open, onSubmit, onClose }) => {
                   <label>Paid</label>
                   <Checkbox
                     placeholder="paid"
+                    toggle
+                    checked={formData.paid}
                     onChange={(e, data) => {
                       fillEntity("paid", data.checked);
                     }}
@@ -106,6 +129,7 @@ const AddUserAccountModel = ({ open, onSubmit, onClose }) => {
                   <label>Amount</label>
                   <Input
                     placeholder="amount in LBP"
+                    value={formData.amount}
                     onChange={(e) => {
                       fillEntity("amount", e.target.value);
                     }}
@@ -117,6 +141,7 @@ const AddUserAccountModel = ({ open, onSubmit, onClose }) => {
                   <label>Comment</label>
                   <Input
                     placeholder="add comment..."
+                    value={formData.comment}
                     onChange={(e) => {
                       fillEntity("comment", e.target.value);
                     }}
@@ -129,12 +154,14 @@ const AddUserAccountModel = ({ open, onSubmit, onClose }) => {
       </Modal.Content>
       <Modal.Actions>
         <div style={{ float: "right" }}>
-          <Button
-            content="Add"
-            loading={submitting}
-            onClick={onAddUserUserAccount}
-          />
-          <Button onClick={onClose}>Close</Button>
+          <Button loading={submitting} icon onClick={onAddUserUserAccount}>
+            Save
+            <Icon name="save" />
+          </Button>
+          <Button onClick={onClose} icon>
+            Cancel
+            <Icon name="close" />
+          </Button>
         </div>
       </Modal.Actions>
     </Modal>
