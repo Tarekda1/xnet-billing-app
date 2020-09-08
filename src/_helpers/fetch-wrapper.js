@@ -74,8 +74,7 @@ function handleResponse(response) {
         localStorage.getItem("token") != null
       ) {
         // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
-        //return '';
-        accountService.logout();
+        return accountService.logout();
       }
 
       const error = (data && data.message) || response.statusText;

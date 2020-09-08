@@ -24,6 +24,11 @@ router.get("/packages/:id", authorize(), getPackageById);
 router.put("/packages/:id", authorize(), updatePackageSchema, updatePackage);
 router.delete("/packages/:id", authorize(), deletePackage);
 router.get("/accounting", authorize(Role.Admin), getAllUserAccounts);
+router.get(
+  "/search/:searchterm",
+  authorize(Role.Admin),
+  searchUserAccountByUser
+);
 router.post(
   "/accounting/",
   authorize(Role.Admin),
@@ -127,7 +132,7 @@ function createUser(req, res, next) {
 }
 
 function createUserAccount(req, res, next) {
-  console.log(`adding user account: ${req.body}`);
+  //console.log(`adding user account: ${req.body}`);
   ispUsersService
     .createUserAccount(req.body)
     .then(() => res.json({ message: "Successfully added user" }))
@@ -135,7 +140,7 @@ function createUserAccount(req, res, next) {
 }
 
 function createPackage(req, res, next) {
-  console.log(req.body);
+  //console.log(req.body);
   ispUsersService
     .createPackage(req.body)
     .then(() => res.json({ message: "Successfully added package" }))
@@ -187,6 +192,22 @@ function getPackageById(req, res, next) {
     .catch(next);
 }
 
+function searchUserAccountByUser(req, res, next) {
+  // admins can get any account
+  if (req.user.role !== Role.Admin) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  console.log(req.params.searchterm);
+
+  ispUsersService
+    .search(req.params.searchterm)
+    .then((users) => res.json(users))
+    .catch(next);
+}
+
 function update(req, res, next) {
   // users can update their own account and admins can update any account
   if (req.user.role !== Role.Admin) {
@@ -215,7 +236,7 @@ function updateUserAccount(req, res, next) {
   if (req.user.role !== Role.Admin) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  console.log(`req.body ${req.body.paid}`);
+  //console.log(`req.body ${req.body.paid}`);
   ispUsersService
     .updateUserAccount(req.params.id, req.body)
     .then((userAcc) => res.json(userAcc))

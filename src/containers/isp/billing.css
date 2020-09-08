@@ -22,3 +22,7 @@
   background-color: red !important;
   color: white !important;
 }
+
+.useraccounts__search {
+  margin-left: 5px !important;
+}

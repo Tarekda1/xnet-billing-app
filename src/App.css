@@ -45,7 +45,7 @@ p {
 
 .primary-button {
   box-shadow: 0 0 0 1px var(--primary-color) inset !important;
-  background-color: #1b3070 /*#f2711c*/ !important;
+  background-color: var(--primary-color) !important;
   color: white !important;
   font-weight: 500 !important;
 }
@@ -57,6 +57,26 @@ p {
   font-weight: 500 !important;
 }
 
+/* .basicbutton {
+  background-color: -var(--primary-color) !important;
+  color: white !important;
+} */
+
+.basicbutton,
+.basicStyle {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.noPadding {
+  padding: 0 !important;
+}
+.noMargin {
+  margin: 0 !important;
+}
+.paddingTopZero {
+  padding-top: 0 !important;
+}
 /* headers */
 
 .ui.header {
@@ -72,6 +92,12 @@ p {
   height: 87vh !important;
   box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0);
   /*overflow-y: scroll;*/
+}
+
+/* check box input */
+.ui.toggle.checkbox input:checked ~ .box:before,
+.ui.toggle.checkbox input:checked ~ label:before {
+  background-color: var(--primary-color) !important;
 }
 
 /* Grid margin */

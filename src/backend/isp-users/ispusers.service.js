@@ -21,6 +21,7 @@ module.exports = {
   createUserAccount,
   updateUserAccount,
   getUserAccById,
+  search,
 };
 
 async function create(params) {
@@ -130,7 +131,6 @@ async function getAllUserAccounts() {
     .populate("user")
     .populate("package");
   return users.map((x) => {
-    console.log(`usercc ${x}`);
     return basicAccountDetails(x);
   });
 }
@@ -142,6 +142,47 @@ async function getUserAccById(id) {
     .populate("package");
   if (!userAcc) throw "User account not found";
   return userAcc;
+}
+
+async function search(searchterm) {
+  if (!searchterm) {
+    throw "Invalid search term";
+  }
+
+  // const userAccs = await db.UserAccount.find({
+  //   $or: [
+  //     {
+  //       "user.firstName": { $regex: /searchterm/ },
+  //       "user.lastName": { $regex: /searchterm/ },
+  //       "user.phoneNumber": { $regex: /searchterm/ },
+  //     },
+  //   ],
+  // })
+  //   .populate("user")
+  //   .populate("package");
+  const userAccs = db.UserAccount.aggregate([
+    { $unwind: "$user" },
+    {
+      $lookup: {
+        from: "user",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $match: {
+        "user.firstName": { $regex: /searchterm/ },
+        "user.lastName": { $regex: /searchterm/ },
+      },
+    },
+  ]);
+
+  console.log(userAccs);
+  if (!userAccs) throw "User account not found";
+  return userAccs.map((x) => {
+    return basicAccountDetails(x);
+  });
 }
 
 async function getAllPackages() {
@@ -196,6 +237,7 @@ async function updateUserAccount(id, params) {
   const userAcc = await getUserAccById(id);
   console.log(userAcc);
   console.log(`params: ${params.paid}`);
+  console.log(`params: ${params.amount}`);
   // copy params to account and save
   Object.assign(userAcc, params);
   userAcc.paid = params.paid;

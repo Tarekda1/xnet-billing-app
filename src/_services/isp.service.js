@@ -18,6 +18,7 @@ export const ispService = {
   createUserAccount,
   getAllUserAccounts,
   updateUserAcc,
+  searchUserAccount,
 };
 
 function getAllUsers() {
@@ -50,6 +51,7 @@ function updateUser(id, params) {
 }
 
 function updateUserAcc(id, params) {
+  console.log(params);
   return fetchWrapper
     .put(`${baseUrl}/accounting/${id}`, params)
     .then((userAcc) => {
@@ -65,4 +67,8 @@ function deleteUser(id) {
 
 function getAllPackages() {
   return fetchWrapper.get(`${baseUrl}/packages`);
+}
+
+function searchUserAccount(user) {
+  return fetchWrapper.get(`${baseUrl}/search/${user}`);
 }

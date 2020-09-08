@@ -9,6 +9,7 @@ import {
   Table,
   Icon,
   Checkbox,
+  Input,
 } from "semantic-ui-react";
 import "./billing.css";
 import AddUserAccountModal from "@/_components/ui/add_user_account_modal/AddUserAccountModal";
@@ -24,9 +25,11 @@ export const Billing = ({ match }) => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const userAccounts = useSelector((state) => state.isp.userAccounts);
-  //const [showEditModel, setShowEditModel] = useState(false);
+  const [tempUserAccs, settempUserAccs] = useState([]);
   const [selectUserAcc, setSelectedUserAcc] = useState({});
   const [isEdit, setIsEdit] = useState(false);
+  const [searchterm, setSearchterm] = useState("");
+  const [searching, setSearching] = useState(false);
   const onAddUserAccModalClose = () => {
     setOpenAddModal(false);
   };
@@ -49,6 +52,10 @@ export const Billing = ({ match }) => {
     return () => {};
   }, []);
 
+  useEffect(() => {
+    settempUserAccs(userAccounts);
+  }, [userAccounts]);
+
   const deleteUserAcc = (e) => {};
 
   const onPaidChecked = (e, id) => {
@@ -61,8 +68,29 @@ export const Billing = ({ match }) => {
       paid: e.checked,
       comment: userAcc.comment,
       billDate: userAcc.billDate,
+      amount: userAcc.amount,
     };
     if (userAcc) dispatch(globalActions.updateUserAcc(id, userAccPost));
+  };
+
+  const onSearchSubmit = () => {
+    if (searchterm) {
+      setSearching(true);
+      const filteredAccs = userAccounts.filter((userAcc) => {
+        console.log(userAcc);
+        return userAcc.user.firstName.toLowerCase().indexOf(searchterm) != -1;
+      });
+      settempUserAccs(filteredAccs);
+      setTimeout(() => setSearching(false), 300);
+    }
+  };
+
+  const handleSearchInputChange = (e) => {
+    setSearchterm(e.target.value);
+    if (e.target.value.trim() === "") {
+      setSearching(false);
+      settempUserAccs(userAccounts);
+    }
   };
 
   const tableHeader = [
@@ -76,10 +104,10 @@ export const Billing = ({ match }) => {
   ];
 
   return (
-    <Container fluid>
+    <Container className="useraccounts" fluid>
       <Segment className="toolbar">
         <Header floated="left" className="toolbar__header" as="h2">
-          Accounting
+          User Accounts
         </Header>
         <List floated="right" horizontal>
           <List.Item>
@@ -109,8 +137,23 @@ export const Billing = ({ match }) => {
           </List.Item>
         </List>
       </Segment>
-      <Segment className="Segment__noBorder">
-        <Header as="h3">User accounts</Header>
+      <Segment className="Segment__noBorder noMargin paddingTopZero">
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Input
+            name="search"
+            icon="users"
+            onChange={handleSearchInputChange}
+            iconPosition="left"
+            loading={searching}
+            placeholder="Search users..."
+          />
+          <Button
+            className="useraccounts__search primary-button"
+            icon="search"
+            name="searchButton"
+            onClick={onSearchSubmit}
+          />
+        </div>
         <Table>
           <Table.Header>
             <Table.Row>
@@ -120,67 +163,81 @@ export const Billing = ({ match }) => {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {userAccounts.map(
-              (
-                {
-                  user: {
-                    firstName,
-                    lastName,
-                    phoneNumber,
-                    address: userAddress,
+            {!tempUserAccs.length > 0 ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  height: "200px",
+                  width: "200px",
+                }}
+              >
+                <p>No result found</p>
+              </div>
+            ) : (
+              tempUserAccs.map(
+                (
+                  {
+                    user: {
+                      firstName,
+                      lastName,
+                      phoneNumber,
+                      address: userAddress,
+                    },
+                    comment,
+                    paid,
+                    amount,
+                    billDate,
+                    id,
                   },
-                  comment,
-                  paid,
-                  amount,
-                  billDate,
-                  id,
-                },
-                index
-              ) => {
-                return (
-                  <Table.Row className="useraccounts" key={index}>
-                    <Table.Cell>{firstName}</Table.Cell>
-                    <Table.Cell>{lastName}</Table.Cell>
-                    <Table.Cell>{phoneNumber}</Table.Cell>
-                    {/* <Table.Cell>{profile}</Table.Cell> */}
-                    <Table.Cell>
-                      <Checkbox
-                        name="paid"
-                        onChange={(e, event) => onPaidChecked(event, id)}
-                        toggle
-                        checked={paid}
-                      />
-                    </Table.Cell>
-                    <Table.Cell>{amount}</Table.Cell>
-                    <Table.Cell>{comment}</Table.Cell>
-                    <Table.Cell>{billDate}</Table.Cell>
-                    <Table.Cell tyle={{ whiteSpace: "nowrap" }}>
-                      <div style={{ display: "flex", flexDirection: "row" }}>
-                        <Button
-                          icon
-                          primary
-                          onClick={() => onEditUserAccModal(id)}
-                          className="btn btn-sm btn-primary mr-1"
-                        >
-                          <Icon name="edit" />
-                        </Button>
-                        <Button
-                          onClick={(id) => deleteUserAcc(id)}
-                          icon
-                          className="useraccounts__button useraccounts__button-delete"
-                          disabled={isDeleting}
-                        >
-                          {isDeleting ? (
-                            <span className="spinner-border spinner-border-sm" />
-                          ) : (
-                            <Icon name="user delete" />
-                          )}
-                        </Button>
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                );
-              }
+                  index
+                ) => {
+                  return (
+                    <Table.Row className="useraccounts" key={index}>
+                      <Table.Cell>{firstName}</Table.Cell>
+                      <Table.Cell>{lastName}</Table.Cell>
+                      <Table.Cell>{phoneNumber}</Table.Cell>
+                      {/* <Table.Cell>{profile}</Table.Cell> */}
+                      <Table.Cell>
+                        <Checkbox
+                          name="paid"
+                          onChange={(e, event) => onPaidChecked(event, id)}
+                          toggle
+                          checked={paid}
+                        />
+                      </Table.Cell>
+                      <Table.Cell>{amount}</Table.Cell>
+                      <Table.Cell>{comment}</Table.Cell>
+                      <Table.Cell>{billDate}</Table.Cell>
+                      <Table.Cell tyle={{ whiteSpace: "nowrap" }}>
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                          <Button
+                            icon
+                            primary
+                            onClick={() => onEditUserAccModal(id)}
+                            className="btn btn-sm basicStyle mr-1"
+                          >
+                            <Icon name="edit" />
+                          </Button>
+                          <Button
+                            onClick={(id) => deleteUserAcc(id)}
+                            icon
+                            className="useraccounts__button useraccounts__button-delete"
+                            disabled={isDeleting}
+                          >
+                            {isDeleting ? (
+                              <span className="spinner-border spinner-border-sm" />
+                            ) : (
+                              <Icon name="user delete" />
+                            )}
+                          </Button>
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                  );
+                }
+              )
             )}
           </Table.Body>
         </Table>

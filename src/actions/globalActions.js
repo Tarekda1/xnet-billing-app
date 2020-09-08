@@ -1,5 +1,6 @@
 import types from "./types";
 import { ispService } from "@/_services";
+import userActions from "@/actions/userActions";
 
 const globalActions = {
   changeLanguage: (data) => {
@@ -44,9 +45,15 @@ const globalActions = {
   },
   fetchInternetUsers: () => {
     return async (dispatch, getState) => {
-      const data = await ispService.getAllUsers();
-      console.log(data);
-      return dispatch(globalActions.loadInternetUser(data));
+      try {
+        const data = await ispService.getAllUsers();
+        console.log(data);
+        return dispatch(globalActions.loadInternetUser(data));
+      } catch (err) {
+        if (err === 403) {
+          dispatch(userActions.logout());
+        }
+      }
     };
   },
   fetchInternetUserAccounts: () => {
@@ -59,9 +66,20 @@ const globalActions = {
   updateUserAcc: (id, userAcc) => {
     return async (dispatch, getState) => {
       console.log(id);
-      await ispService.updateUserAcc(id, userAcc);
-      //console.log(data);
+      const data = await ispService.updateUserAcc(id, userAcc);
+      console.log(data);
       dispatch(globalActions.fetchInternetUserAccounts());
+    };
+  },
+  searchForUser: (term) => {
+    return async (dispatch, getState) => {
+      console.log(term);
+      const data = getState().isp.userAccounts.filter((userAcc) => {
+        console.log(userAcc);
+        return userAcc.user.firstName.toLowerCase().indexOf(term) != -1;
+      });
+      console.log(`datareturned: ${data}`);
+      return dispatch(globalActions.loadInternetUserAccounts(data));
     };
   },
 };

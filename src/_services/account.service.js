@@ -40,16 +40,21 @@ function login(email, password) {
 
 function logout(callback) {
   // revoke token, stop refresh timer, publish null to user subscribers and redirect to login page
-  fetchWrapper.post(`${baseUrl}/revoke-token`, {});
-  //stopRefreshTokenTimer();
   localStorage.removeItem("token");
-  callback && callback();
+  fetchWrapper.post(`${baseUrl}/revoke-token`, {}).then(
+    () => {
+      //stopRefreshTokenTimer();
+    },
+    () => {
+      callback && callback();
+    }
+  );
 }
 
 function refreshToken() {
   return fetchWrapper.post(`${baseUrl}/refresh-token`, {}).then((user) => {
     // publish user to subscribers and start timer to refresh token
-    userSubject.next(user);
+    //userSubject.next(user);
     //startRefreshTokenTimer();
     localStorage.setItem("user", JSON.stringify(user));
     return user;
@@ -81,7 +86,14 @@ function resetPassword({ token, password, confirmPassword }) {
 }
 
 function getAll() {
-  return fetchWrapper.get(baseUrl);
+  return fetchWrapper.get(baseUrl).then(
+    (users) => {
+      return users;
+    },
+    (err) => {
+      throw err;
+    }
+  );
 }
 
 function getById(id) {

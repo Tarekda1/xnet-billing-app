@@ -3,13 +3,16 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { accountService } from "@/_services";
 import { Loading } from "@/_components";
-import { Segment, Table, Button } from "semantic-ui-react";
+import { Segment, Table, Button, Icon } from "semantic-ui-react";
+import { AddEdit } from "./AddEdit";
 
 function List({ match }) {
   const { path } = match;
   const [users, setUsers] = useState([]);
   const [loading, setloading] = useState(true);
   const isVisibleRef = useRef(true);
+  const [selectedUserId, setselectedUserId] = useState(-1);
+  const [showModal, setshowModal] = useState(false);
 
   async function fetchUser() {
     const usersFromServer = await accountService.getAll();
@@ -68,7 +71,7 @@ function List({ match }) {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {users &&
+            {users && users.length > 0 ? (
               users.map((user) => (
                 <Table.Row key={user.id}>
                   <Table.Cell>
@@ -80,35 +83,40 @@ function List({ match }) {
                   <Table.Cell>{user.role}</Table.Cell>
                   <Table.Cell tyle={{ whiteSpace: "nowrap" }}>
                     <div style={{ display: "flex", flexDirection: "row" }}>
-                      <Link
-                        to={`${path}/edit/${user.id}`}
-                        style={{
-                          padding: "10px",
-                          background: "green",
-                          marginRight: "10px",
-                          borderRadius: "5px",
-                          color: "white",
+                      <Button
+                        icon
+                        className="basicbutton"
+                        onClick={() => {
+                          setselectedUserId(user.id);
+                          setshowModal(true);
                         }}
-                        className="btn btn-sm btn-primary mr-1"
                       >
-                        Edit
-                      </Link>
+                        <Icon name="edit" />
+                      </Button>
                       <Button
                         onClick={() => deleteUser(user.id)}
-                        className="btn btn-sm btn-danger"
-                        style={{ background: "red", color: "white" }}
+                        className="basicStyle"
+                        icon
+                        loading={user.isDeleting}
                         disabled={user.isDeleting}
                       >
-                        {user.isDeleting ? (
-                          <span className="spinner-border spinner-border-sm" />
-                        ) : (
-                          <span>Delete</span>
-                        )}
+                        <Icon name="delete" />
                       </Button>
+                      <AddEdit
+                        id={selectedUserId}
+                        onSave={() => setshowModal(false)}
+                        open={showModal}
+                      />
                     </div>
                   </Table.Cell>
                 </Table.Row>
-              ))}
+              ))
+            ) : (
+              <div>
+                no users found <br />
+                <Button>Add User Account</Button>
+              </div>
+            )}
             {!users && (
               <Table.Row>
                 <td colSpan="4" className="text-center">

@@ -4,6 +4,7 @@ const initialState = {
   users: [],
   packages: [],
   userAccounts: [],
+  tempUserAccount: [],
 };
 
 export default (state = initialState, action) => {

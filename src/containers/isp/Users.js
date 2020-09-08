@@ -10,6 +10,7 @@ import {
   Grid,
   Button,
 } from "semantic-ui-react";
+import "./users.css";
 import AddUserModel from "@/_components/ui/add_user_model/AddUserModel";
 import AddPackageModal from "@/_components/ui/add_package_modal/AddPackageModal";
 
@@ -43,17 +44,25 @@ const Users = () => {
   };
 
   return (
-    <Container fluid style={{ padding: "10px" }}>
+    <Container className="userslist" fluid style={{ padding: "10px" }}>
       <Grid>
         <Grid.Row>
           <Grid.Column floated="left" width={4}>
             <Header as="h1"> Xnet ISP Users</Header>
           </Grid.Column>
           <Grid.Column floated="right" width={12}>
-            <Button floated="right" onClick={() => setShowPackageModel(true)}>
+            <Button
+              floated="right"
+              className="userslist__action-button primary-button"
+              onClick={() => setShowPackageModel(true)}
+            >
               Add Package
             </Button>
-            <Button floated="right" onClick={() => setShowUserModel(true)}>
+            <Button
+              floated="right"
+              className="userslist__action-button primary-button"
+              onClick={() => setShowUserModel(true)}
+            >
               Add User
             </Button>
             <AddUserModel

@@ -16,6 +16,7 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import { ISP } from "@/containers/isp";
 import { TopNavigation } from "@/_components";
+
 function App({ trans }) {
   return (
     <Provider store={store}>

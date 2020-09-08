@@ -46,7 +46,7 @@ function Details({ match }) {
       <Segment className="profile" style={{ padding: "40px" }}>
         <Grid>
           <Grid.Column width={4}>
-            <Avatar />
+            <Avatar className="profile__avatar" />
           </Grid.Column>
           <Grid.Column width={9}>
             <Table className="profileTable">
@@ -87,7 +87,10 @@ function Details({ match }) {
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell>
-                    <Link to={`${path}/update`} className="profile__action">
+                    <Link
+                      to={`${path}/update`}
+                      className="profile__action basicStyle"
+                    >
                       Update Profile
                     </Link>
                   </Table.Cell>
