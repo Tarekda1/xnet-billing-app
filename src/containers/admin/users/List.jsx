@@ -95,12 +95,12 @@ function List({ match }) {
                       </Button>
                       <Button
                         onClick={() => deleteUser(user.id)}
-                        className="basicStyle"
+                        className="basicbutton"
                         icon
                         loading={user.isDeleting}
                         disabled={user.isDeleting}
                       >
-                        <Icon name="delete" />
+                        <Icon name="trash" />
                       </Button>
                       <AddEdit
                         id={selectedUserId}

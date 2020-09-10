@@ -62,7 +62,15 @@ p {
   color: white !important;
 } */
 
-.basicbutton,
+.basicbutton {
+  color: var(--primary-color) !important;
+  background: white !important;
+  border: 1px solid var(--primary-color) !important;
+  border-radius: 5px !important;
+  box-shadow: 1px 1px 1px 1px rgba(10, 10, 10, 0.2) !important;
+  margin: 4px !important;
+}
+
 .basicStyle {
   background-color: var(--primary-color) !important;
   color: white !important;
@@ -123,3 +131,5 @@ p {
   background: rgba(0, 0, 0, 0.03);
   color: rgba(0, 0, 0, 0.8);
 }
+
+@import "~semantic-ui-css/semantic.css";

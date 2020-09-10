@@ -5,7 +5,7 @@ import {
   Redirect,
   BrowserRouter as Router,
 } from "react-router-dom";
-import "./App.css";
+import "./App.less";
 import { PrivateRoute, Alert } from "@/_components";
 import { AppSidebar } from "@/_components/ui/app_sidebar/AppSidebar";
 import { Dashboard } from "@/containers/dashboard";

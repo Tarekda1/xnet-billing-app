@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Dropdown, Menu, Grid, Button, Header } from "semantic-ui-react";
-import "./TopNavigation.less";
+import "./TopNavigation.css";
 import { useSelector, useDispatch } from "react-redux";
 import userActions from "@/actions/userActions";
 import { useHistory } from "react-router-dom";
