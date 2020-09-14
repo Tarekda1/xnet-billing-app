@@ -5,6 +5,7 @@ import { accountService } from "@/_services";
 import { Loading } from "@/_components";
 import { Segment, Table, Button, Icon } from "semantic-ui-react";
 import { AddEdit } from "./AddEdit";
+import "./List.less";
 
 function List({ match }) {
   const { path } = match;
@@ -53,7 +54,7 @@ function List({ match }) {
       {loading ? (
         <Loading />
       ) : (
-        <Table className="table table-striped">
+        <Table className="table table-striped users">
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell style={{ width: "20%" }}>Name</Table.HeaderCell>
@@ -73,7 +74,7 @@ function List({ match }) {
           <Table.Body>
             {users && users.length > 0 ? (
               users.map((user) => (
-                <Table.Row key={user.id}>
+                <Table.Row className="users__row" key={user.id}>
                   <Table.Cell>
                     {user.title} {user.firstName} {user.lastName}
                   </Table.Cell>
@@ -85,7 +86,7 @@ function List({ match }) {
                     <div style={{ display: "flex", flexDirection: "row" }}>
                       <Button
                         icon
-                        className="basicbutton"
+                        className="basicStyle"
                         onClick={() => {
                           setselectedUserId(user.id);
                           setshowModal(true);
@@ -95,7 +96,7 @@ function List({ match }) {
                       </Button>
                       <Button
                         onClick={() => deleteUser(user.id)}
-                        className="basicbutton"
+                        className="basicStyle users__row-delete"
                         icon
                         loading={user.isDeleting}
                         disabled={user.isDeleting}
