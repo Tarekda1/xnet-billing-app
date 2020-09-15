@@ -14,7 +14,7 @@ import {
 } from "semantic-ui-react";
 import { Loading, Avatar } from "@/_components";
 import "./profile.css";
-import userActions from "@/actions/userActions";
+import userActions from "@/_actions/userActions";
 
 function Update({ history }) {
   //const user = accountService.userValue;

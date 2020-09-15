@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Dropdown, Menu, Grid, Button, Header } from "semantic-ui-react";
 import "./TopNavigation.css";
 import { useSelector, useDispatch } from "react-redux";
-import userActions from "@/actions/userActions";
+import userActions from "@/_actions/userActions";
 import { useHistory } from "react-router-dom";
-//import i18n from '../../../Translation';
-import { globalActions } from "@/actions/globalActions";
+import { globalActions } from "@/_actions/globalActions";
 import { useTranslation } from "react-i18next";
 
 const TopNavigation = ({ i18n }) => {

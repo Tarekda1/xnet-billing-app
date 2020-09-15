@@ -1,3 +1,5 @@
+@import "~semantic-ui-css/semantic.css";
+
 html,
 body,
 #root {
@@ -15,6 +17,7 @@ body,
   --highlight-color: #1b306f47; /*#ffdcc0;*/
   --primary-border-color: #282262; /*#f26524;*/
   --background-color: #ecf1fb;
+  --green: green;
 
   --navbar-background-color: #fff;
   --sidebar-background-color: #fff;
@@ -48,6 +51,7 @@ p {
   background-color: var(--primary-color) !important;
   color: white !important;
   font-weight: 500 !important;
+  padding: 10px !important;
 }
 
 .secondary-button {
@@ -62,7 +66,7 @@ p {
   color: white !important;
 } */
 
-.basicbutton {
+.basicButton {
   color: var(--primary-color) !important;
   background: white !important;
   border: 1px solid var(--primary-color) !important;
@@ -74,6 +78,8 @@ p {
 .basicStyle {
   background-color: var(--primary-color) !important;
   color: white !important;
+  padding: 10px 10px !important;
+  border-radius: 4px !important;
 }
 
 .noPadding {
@@ -105,7 +111,7 @@ p {
 /* check box input */
 .ui.toggle.checkbox input:checked ~ .box:before,
 .ui.toggle.checkbox input:checked ~ label:before {
-  background-color: var(--primary-color) !important;
+  background-color: var(--green) !important;
 }
 
 /* Grid margin */
@@ -131,5 +137,3 @@ p {
   background: rgba(0, 0, 0, 0.03);
   color: rgba(0, 0, 0, 0.8);
 }
-
-@import "~semantic-ui-css/semantic.css";

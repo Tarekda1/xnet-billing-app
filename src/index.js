@@ -7,24 +7,6 @@ import "@babel/polyfill";
 import { App } from "./App";
 import i18n from "./Translation";
 
-//import './styles.less';
-
-// setup fake backend
-//import { configureFakeBackend } from './_helpers';
-//configureFakeBackend();
-
-// attempt silent token refresh before startup
-// accountService.refreshToken().finally(startApp);
-
-// function startApp() {
-// ReactDOM.render(
-// 	<Router history={history}>
-// 		<App />
-// 	</Router>,
-// 	document.getElementById('app')
-// );
-// }
-
 ReactDOM.render(
   <Suspense fallback={null}>
     <App trans={i18n} />

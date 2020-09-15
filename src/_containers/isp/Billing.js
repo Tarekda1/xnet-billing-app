@@ -15,7 +15,7 @@ import "./billing.css";
 import AddUserAccountModal from "@/_components/ui/add_user_account_modal/AddUserAccountModal";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { globalActions } from "@/actions/globalActions";
+import { globalActions } from "@/_actions/globalActions";
 import { ispService } from "@/_services/isp.service";
 import { func } from "prop-types";
 

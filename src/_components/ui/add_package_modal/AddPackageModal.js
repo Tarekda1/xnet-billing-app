@@ -9,11 +9,11 @@ import {
   Checkbox,
   Grid,
   Dropdown,
+  Icon,
 } from "semantic-ui-react";
+import "./add-package-model.less";
 import { ispService } from "@/_services/";
 const AddPackageModal = ({ open, onSubmit, onClose }) => {
-  // const [showModel, setshowModel] = useState(true);
-  // const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [displayName, setDisplayName] = useState("");
 
@@ -36,7 +36,7 @@ const AddPackageModal = ({ open, onSubmit, onClose }) => {
       // onClose={() => setshowModel(false)}
       // onOpen={() => setshowModel(true)}
     >
-      <Header>Add Profile</Header>
+      <Header>Add Package</Header>
       <Modal.Content>
         <Form>
           <Grid>
@@ -56,10 +56,22 @@ const AddPackageModal = ({ open, onSubmit, onClose }) => {
           </Grid>
         </Form>
       </Modal.Content>
-      <Modal.Actions>
-        <div style={{ float: "right" }}>
-          <Button content="Add" loading={submitting} onClick={onAddPackage} />
-          <Button onClick={onClose}>Close</Button>
+      <Modal.Actions className="packagemodel__actions">
+        <div style={{ float: "right", margin: "10px" }}>
+          <Button
+            icon
+            className="basicStyle packagemodel__actions-button"
+            loading={submitting}
+            onClick={onAddPackage}
+          >
+            <Icon name="plus" /> Add
+          </Button>
+          <Button
+            className="basicStyle packagemodel__actions-button"
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
         </div>
       </Modal.Actions>
     </Modal>

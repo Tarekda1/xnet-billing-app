@@ -9,12 +9,15 @@ import {
   Checkbox,
   Grid,
   Dropdown,
+  Icon,
 } from "semantic-ui-react";
+import "./add-user-model.less";
 import { ispService } from "@/_services/";
-const AddUserModel = ({ open, onSubmit, onClose }) => {
+const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
   const [packages, setpackages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [user, setUser] = useState({});
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -34,6 +37,10 @@ const AddUserModel = ({ open, onSubmit, onClose }) => {
       key: pkg.id,
       value: pkg.id,
     }));
+    if (edit && selectedIds && selectedIds.length > 0) {
+      const tempUser = await ispService.getUserById(selectedIds.pop());
+      tempUser && setUser(tempUser);
+    }
     setpackages(packagesData);
     setLoading(false);
   };
@@ -77,6 +84,7 @@ const AddUserModel = ({ open, onSubmit, onClose }) => {
                   <label>First Name</label>
                   <Input
                     placeholder="first name"
+                    value={user.firstName}
                     onChange={(e) => {
                       fillEntity("firstName", e.target.value);
                     }}
@@ -163,10 +171,22 @@ const AddUserModel = ({ open, onSubmit, onClose }) => {
           </Grid>
         </Form>
       </Modal.Content>
-      <Modal.Actions>
-        <div style={{ float: "right" }}>
-          <Button content="Add" loading={submitting} onClick={onAddUser} />
-          <Button onClick={onClose}>Close</Button>
+      <Modal.Actions className="usermodel__actions">
+        <div style={{ float: "right", margin: "10px" }}>
+          <Button
+            className="basicStyle usermodel__actions-button"
+            loading={submitting}
+            icon
+            onClick={onAddUser}
+          >
+            <Icon name="plus" /> Add
+          </Button>
+          <Button
+            className="basicStyle usermodel__actions-button"
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
         </div>
       </Modal.Actions>
     </Modal>

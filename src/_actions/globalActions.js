@@ -1,6 +1,6 @@
 import types from "./types";
 import { ispService } from "@/_services";
-import userActions from "@/actions/userActions";
+import userActions from "@/_actions/userActions";
 
 const globalActions = {
   changeLanguage: (data) => {
