@@ -2,8 +2,9 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Modal, Button, Grid, Input } from "semantic-ui-react";
+import { Modal, Button, Grid, Input, Segment } from "semantic-ui-react";
 import { accountService, alertService } from "@/_services";
+import "./add-edit.less";
 
 function AddEdit({ history, match, open, id, onSave }) {
   const isAddMode = !id;
@@ -101,15 +102,12 @@ function AddEdit({ history, match, open, id, onSave }) {
           }, []);
 
           return (
-            <Form>
+            <Form style={{ padding: "15px" }}>
               <h1>{isAddMode ? "Add User" : "Edit User"}</h1>
               <Grid>
                 <Grid.Row>
                   <Grid.Column width={8}>
-                    <div
-                      style={{ display: "flex", flexDirection: "column" }}
-                      className="form-group col"
-                    >
+                    <div className="form-group__col">
                       <label>Title</label>
                       <Field
                         name="title"
@@ -131,10 +129,7 @@ function AddEdit({ history, match, open, id, onSave }) {
                         className="invalid-feedback"
                       />
                     </div>
-                    <div
-                      style={{ display: "flex", flexDirection: "column" }}
-                      className="form-group col-5"
-                    >
+                    <div className="form-group__col">
                       <label>First Name</label>
                       <Input
                         name="firstName"
@@ -152,10 +147,7 @@ function AddEdit({ history, match, open, id, onSave }) {
                         className="invalid-feedback"
                       />
                     </div>
-                    <div
-                      style={{ display: "flex", flexDirection: "column" }}
-                      className="form-group col-5"
-                    >
+                    <div className="form-group__col">
                       <label>Last Name</label>
                       <Input
                         name="lastName"
@@ -173,10 +165,7 @@ function AddEdit({ history, match, open, id, onSave }) {
                         className="invalid-feedback"
                       />
                     </div>
-                    <div
-                      style={{ display: "flex", flexDirection: "column" }}
-                      className="form-group col-5"
-                    >
+                    <div className="form-group__col">
                       <label>email</label>
                       <Input
                         name="email"
@@ -193,10 +182,7 @@ function AddEdit({ history, match, open, id, onSave }) {
                         className="invalid-feedback"
                       />
                     </div>
-                    <div
-                      style={{ display: "flex", flexDirection: "column" }}
-                      className="form-group col"
-                    >
+                    <div className="form-group__col">
                       <label>Role</label>
                       <Field
                         name="role"
@@ -221,12 +207,11 @@ function AddEdit({ history, match, open, id, onSave }) {
                     <div className="form-row"></div>
                     {!isAddMode && (
                       <div>
-                        <h3 className="pt-3">Change Password</h3>
                         <p>Leave blank to keep the same password</p>
                       </div>
                     )}
                     <div className="form-row">
-                      <div className="form-group col">
+                      <div className="form-group__col">
                         <label>Password</label>
                         <Field
                           name="password"
@@ -266,7 +251,7 @@ function AddEdit({ history, match, open, id, onSave }) {
                   </Grid.Column>
                 </Grid.Row>
               </Grid>
-              <div className="form-group">
+              <Segment floated="right" className="form-group">
                 <Button
                   type="submit"
                   disabled={isSubmitting}
@@ -278,10 +263,8 @@ function AddEdit({ history, match, open, id, onSave }) {
                   )}
                   Save
                 </Button>
-                <Link to={isAddMode ? "." : ".."} className="btn btn-link">
-                  Cancel
-                </Link>
-              </div>
+                <Button className="btn btn-primary">Cancel</Button>
+              </Segment>
             </Form>
           );
         }}
