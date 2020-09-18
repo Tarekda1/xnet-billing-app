@@ -1,12 +1,20 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
+import _ from "lodash";
 import * as Yup from "yup";
-import { Modal, Button, Grid, Input, Segment } from "semantic-ui-react";
+import {
+  Modal,
+  Button,
+  Grid,
+  Input,
+  Segment,
+  Dropdown,
+} from "semantic-ui-react";
 import { accountService, alertService } from "@/_services";
 import "./add-edit.less";
 
-function AddEdit({ history, match, open, id, onSave }) {
+function AddEdit({ history, match, open, id, onSave, onClose }) {
   const isAddMode = !id;
 
   const initialValues = {
@@ -75,6 +83,21 @@ function AddEdit({ history, match, open, id, onSave }) {
       });
   }
 
+  const roles = ["Admin", "User"];
+
+  const rolesOptions = _.map(roles, (value, index) => ({
+    key: roles[index],
+    text: value,
+    value: roles[index],
+  }));
+
+  const titles = ["Mr,Mrs"];
+  const titleOptions = _.map(titles, (title, index) => ({
+    key: titles[index],
+    text: title,
+    value: titles[index],
+  }));
+
   return (
     <Modal open={open}>
       <Formik
@@ -109,20 +132,14 @@ function AddEdit({ history, match, open, id, onSave }) {
                   <Grid.Column width={8}>
                     <div className="form-group__col">
                       <label>Title</label>
-                      <Field
-                        name="title"
-                        as="select"
+                      <Dropdown
+                        placeholder="title"
+                        options={titleOptions}
                         className={
                           "form-control" +
                           (errors.title && touched.title ? " is-invalid" : "")
                         }
-                      >
-                        <option value="" />
-                        <option value="Mr">Mr</option>
-                        <option value="Mrs">Mrs</option>
-                        <option value="Miss">Miss</option>
-                        <option value="Ms">Ms</option>
-                      </Field>
+                      />
                       <ErrorMessage
                         name="title"
                         component="div"
@@ -184,18 +201,11 @@ function AddEdit({ history, match, open, id, onSave }) {
                     </div>
                     <div className="form-group__col">
                       <label>Role</label>
-                      <Field
-                        name="role"
-                        as="select"
-                        className={
-                          "form-control" +
-                          (errors.role && touched.role ? " is-invalid" : "")
-                        }
-                      >
-                        <option value="" />
-                        <option value="User">User</option>
-                        <option value="Admin">Admin</option>
-                      </Field>
+                      <Dropdown
+                        placeholder="Role"
+                        className="ui selection fluid dropdown"
+                        options={rolesOptions}
+                      />
                       <ErrorMessage
                         name="role"
                         component="div"
@@ -213,7 +223,7 @@ function AddEdit({ history, match, open, id, onSave }) {
                     <div className="form-row">
                       <div className="form-group__col">
                         <label>Password</label>
-                        <Field
+                        <Input
                           name="password"
                           type="password"
                           className={
@@ -229,9 +239,9 @@ function AddEdit({ history, match, open, id, onSave }) {
                           className="invalid-feedback"
                         />
                       </div>
-                      <div className="form-group col">
+                      <div className="form-group__col">
                         <label>Confirm Password</label>
-                        <Field
+                        <Input
                           name="confirmPassword"
                           type="password"
                           className={
@@ -263,7 +273,15 @@ function AddEdit({ history, match, open, id, onSave }) {
                   )}
                   Save
                 </Button>
-                <Button className="btn btn-primary">Cancel</Button>
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onClose();
+                  }}
+                  className="btn btn-primary"
+                >
+                  Cancel
+                </Button>
               </Segment>
             </Form>
           );

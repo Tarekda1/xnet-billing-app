@@ -107,6 +107,7 @@ function List({ match }) {
                         id={selectedUserId}
                         onSave={() => setshowModal(false)}
                         open={showModal}
+                        onClose={() => setshowModal(false)}
                       />
                     </div>
                   </Table.Cell>
