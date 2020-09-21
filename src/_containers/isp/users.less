@@ -1,3 +1,5 @@
+@import "../../variables.less";
+
 .header {
   display: flex !important;
   align-items: center;
@@ -9,11 +11,15 @@
   margin: auto 0px 0 !important;
 }
 .userslist__actions-dropdown {
-  background-color: var(--primary-color);
-  color: white;
   padding: 8px !important;
   border-radius: 4px;
   float: right;
+  .basicStyle;
+}
+
+.basicStyle{
+  background-color: @primary-color !important;
+  color:@text-color !important;
 }
 
 .menu .item .dropdown__actions {
@@ -25,12 +31,11 @@
 }
 .actionsgroup button,
 .actionsgroup .dropdown {
-  background-color: var(--primary-color) !important;
-  color: white !important;
+.basicStyle
 }
 
 .actionsgroup__button {
-  padding: 10px !important;
+  padding: 0 5px 0px !important;
 }
 .actionsgroup__dropdown {
   padding: 10px !important;

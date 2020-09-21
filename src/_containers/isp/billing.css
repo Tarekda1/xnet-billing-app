@@ -26,3 +26,12 @@
 .useraccounts__search {
   margin-left: 5px !important;
 }
+
+.emptyUsersMessage{
+  display: flex;
+  flex:1;
+  justify-content: center;
+  flex-direction: column;
+  align-self: center;
+  align-items: center;
+}
