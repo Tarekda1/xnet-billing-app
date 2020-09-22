@@ -65,9 +65,16 @@ function List({ match }) {
     <Segment>
       <h1>Portal Users</h1>
       <p>All users from secure (admin only) api end point:</p>
-      <Link to={`${path}/add`} className="btn btn-sm btn-success mb-2">
-        Add User
-      </Link>
+      <Button
+        icon
+        className="btn basicStyle"
+        onClick={(e) => {
+          setselectedUserId(-1);
+          setshowModal(true);
+        }}
+      >
+        <Icon name="plus" /> Add User
+      </Button>
       {loading ? (
         <Loading />
       ) : (
@@ -108,7 +115,7 @@ function List({ match }) {
                           setselectedUserId(user.id);
                           setTimeout(() => {
                             setshowModal(true);
-                          }, 200);
+                          }, 100);
                         }}
                       >
                         <Icon name="edit" />

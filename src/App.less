@@ -40,25 +40,28 @@ p {
 
 .secondary-button {
   box-shadow: 0 0 0 1px #e8edf5 inset !important;
-  color:  @primary-color !important;
+  color: @primary-color !important;
   background-color: #f7fafe !important;
   font-weight: 500 !important;
 }
 
 .basicButton {
-  color:  @primary-color !important;
+  color: @primary-color !important;
   background: white !important;
-  border: 1px solid  @primary-color !important;
+  border: 1px solid @primary-color !important;
   border-radius: 5px !important;
   box-shadow: 1px 1px 1px 1px rgba(10, 10, 10, 0.2) !important;
   margin: 4px !important;
 }
 
 .basicStyle {
-  background-color:  @primary-color !important;
+  background-color: @primary-color !important;
   color: white !important;
   padding: 10px 10px !important;
   border-radius: 4px !important;
+  &:hover {
+    background-color: @secondary-color !important;
+  }
 }
 
 .noPadding {
@@ -90,7 +93,7 @@ p {
 /* check box input */
 .ui.toggle.checkbox input:checked ~ .box:before,
 .ui.toggle.checkbox input:checked ~ label:before {
-  background-color:@checkbox-checked-color !important;
+  background-color: @checkbox-checked-color !important;
 }
 
 /* Grid margin */

@@ -19,7 +19,7 @@ import { Loading } from "@/_components/";
 import "./add-edit.less";
 
 function AddEdit({ history, match, open, Id, onSave, onClose }) {
-  const isAddMode = !Id;
+  const [isAddMode, setIsAddMode] = useState(true);
   const isVisible = useRef(false);
   const [id, setId] = useState(-1);
   const [loading, setLoading] = useState(false);
@@ -46,6 +46,9 @@ function AddEdit({ history, match, open, Id, onSave, onClose }) {
 
   useEffect(() => {
     setId(Id);
+    if (Number(Id) !== -1) {
+      setIsAddMode(false);
+    }
     return () => {};
   });
 
@@ -334,7 +337,17 @@ function AddEdit({ history, match, open, Id, onSave, onClose }) {
                   className="btn basicStyle"
                   icon
                 >
-                  <Icon name="save" /> Save
+                  {isAddMode ? (
+                    <>
+                      <Icon name="plus" />
+                      Add
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <Icon name="save" /> Save
+                    </>
+                  )}
                 </Button>
                 <Button
                   onClick={(e) => {
