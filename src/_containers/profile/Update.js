@@ -11,15 +11,19 @@ import {
   Grid,
   Table,
   Button,
+  Icon,
+  Confirm,
 } from "semantic-ui-react";
 import { Loading, Avatar } from "@/_components";
 import "./profile.css";
 import userActions from "@/_actions/userActions";
+import "./update.less";
 
 function Update({ history }) {
   //const user = accountService.userValue;
   const user = useSelector((state) => state.user.userInfo);
   const dispatch = useDispatch();
+  const [opendelete, setOpenDelete] = useState(false);
   const initialValues = {
     title: user.title,
     firstName: user.firstName,
@@ -196,8 +200,8 @@ function Update({ history }) {
                       </Table.Body>
                     </Table>
                   </Grid.Column>
-                  <Grid.Column width={6}>
-                    <Header as="h3" className="pt-3">
+                  <Grid.Column className="passwordcol" width={6}>
+                    <Header as="h3" className="passwordcol__header">
                       Change Password
                     </Header>
                     <p>Leave blank to keep the same password</p>
@@ -261,26 +265,26 @@ function Update({ history }) {
                         type="submit"
                         disabled={isSubmitting}
                         loading={isSubmitting}
+                        icon
                         className="updateProfile__action basicStyle"
                       >
-                        {isSubmitting && (
-                          <span className="spinner-border spinner-border-sm mr-1" />
-                        )}
-                        Update
+                        <Icon name="save" /> Save
                       </Button>
                       <Button
                         type="button"
-                        onClick={() => onDelete()}
-                        className="updateProfile__action updateProfile__action-delete"
-                        style={{ width: "75px" }}
+                        onClick={() => setOpenDelete(true)}
+                        className="updateProfile__action updateProfile__action-delete basicStyle"
+                        icon
+                        loading={isDeleting}
                         disabled={isDeleting}
                       >
-                        {isDeleting ? (
-                          <span className="spinner-border spinner-border-sm" />
-                        ) : (
-                          <span>Delete</span>
-                        )}
+                        <Icon name="trash" /> Delete
                       </Button>
+                      <Confirm
+                        open={opendelete}
+                        onCancel={() => setOpenDelete(false)}
+                        onConfirm={onDelete}
+                      />
                     </div>
                   </Grid.Column>
                 </Grid.Row>

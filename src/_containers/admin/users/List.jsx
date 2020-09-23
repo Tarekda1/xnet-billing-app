@@ -14,6 +14,7 @@ function List({ match }) {
   const isVisibleRef = useRef(true);
   const [selectedUserId, setselectedUserId] = useState(-1);
   const [showModal, setshowModal] = useState(false);
+  const [openDelete, setOpenDelete] = uOeState(false);
 
   async function fetchUser() {
     const usersFromServer = await accountService.getAll();
@@ -158,6 +159,11 @@ function List({ match }) {
         }}
         open={showModal}
         onClose={() => setshowModal(false)}
+      />
+      <Confirm
+        open={opendelete}
+        onCancel={() => setOpenDelete(false)}
+        onConfirm={onDelete}
       />
     </Segment>
   );
