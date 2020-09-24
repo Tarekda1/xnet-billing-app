@@ -96,11 +96,7 @@ function AddEdit({ history, match, open, Id, onSave, onClose }) {
     accountService
       .update(id, fields)
       .then(() => {
-        // alertService.success("Update successful", {
-        //   keepAfterRouteChange: true,
-        // });
         onSave();
-        //history.push("..");
       })
       .catch((error) => {
         setSubmitting(false);
@@ -344,7 +340,6 @@ function AddEdit({ history, match, open, Id, onSave, onClose }) {
                     </>
                   ) : (
                     <>
-                      {" "}
                       <Icon name="save" /> Save
                     </>
                   )}

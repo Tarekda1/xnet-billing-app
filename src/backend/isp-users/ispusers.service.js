@@ -26,7 +26,7 @@ module.exports = {
 
 async function create(params) {
   // validate
-  if (await db.User.findOne({ username: params.username })) {
+  if (await db.User.findOne({ userName: params.userName })) {
     throw 'Username "' + params.username + '" is already added';
   }
   //console.log(params);
@@ -95,6 +95,7 @@ function basicAccountDetails(userAccount) {
 }
 
 function basicDetails(user) {
+  console.log(JSON.stringify(user));
   const {
     id,
     firstName,
@@ -102,10 +103,12 @@ function basicDetails(user) {
     email,
     phoneNumber,
     address,
-    isActive,
+    isUserActive,
     created,
     updated,
     package,
+    userName,
+    password,
   } = user;
   return {
     id,
@@ -114,10 +117,12 @@ function basicDetails(user) {
     email,
     phoneNumber,
     address,
-    isActive,
+    isUserActive,
     created,
     updated,
     package,
+    userName,
+    password,
   };
 }
 
@@ -197,7 +202,7 @@ async function getById(id) {
 
 async function getUser(id) {
   if (!db.isValidId(id)) throw "User not found";
-  const user = await db.User.findById(id);
+  const user = await db.User.findById(id).populate("package");
   if (!user) throw "User not found";
   return user;
 }

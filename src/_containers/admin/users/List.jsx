@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { accountService } from "@/_services";
 import { Loading } from "@/_components";
-import { Segment, Table, Button, Icon } from "semantic-ui-react";
+import { Segment, Table, Button, Icon, Confirm } from "semantic-ui-react";
 import { AddEdit } from "./AddEdit";
 import "./List.less";
 
@@ -14,7 +14,8 @@ function List({ match }) {
   const isVisibleRef = useRef(true);
   const [selectedUserId, setselectedUserId] = useState(-1);
   const [showModal, setshowModal] = useState(false);
-  const [openDelete, setOpenDelete] = uOeState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [selectedIdForDelete, setSelectedIdForDelete] = useState(-1);
 
   async function fetchUser() {
     const usersFromServer = await accountService.getAll();
@@ -25,18 +26,23 @@ function List({ match }) {
   }
 
   async function fetchUserById() {
-    const updateUser = await accountService.getById(selectedUserId);
-    if (updateUser) {
-      let tempUsers = [...users];
-      let index;
-      for (let i = 0; i < tempUsers.length; i++) {
-        if (tempUsers[i].id === updateUser.id) {
-          index = i;
+    try {
+      const updateUser = await accountService.getById(selectedUserId);
+      console.log(updateUser);
+      if (updateUser) {
+        let tempUsers = [...users];
+        let index;
+        for (let i = 0; i < tempUsers.length; i++) {
+          if (tempUsers[i].id === updateUser.id) {
+            index = i;
+          }
         }
-      }
 
-      tempUsers[index] = updateUser;
-      setUsers(tempUsers);
+        tempUsers[index] = updateUser;
+        setUsers(tempUsers);
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -47,18 +53,19 @@ function List({ match }) {
     };
   }, []);
 
-  function deleteUser(id) {
+  function deleteUser() {
     //show confirmation before delete
+    setOpenDelete(false);
     setUsers(
       users.map((x) => {
-        if (x.id === id) {
+        if (x.id === selectedIdForDelete) {
           x.isDeleting = true;
         }
         return x;
       })
     );
-    accountService.delete(id).then(() => {
-      setUsers((users) => users.filter((x) => x.id !== id));
+    accountService.delete(selectedIdForDelete).then((response) => {
+      setUsers((users) => users.filter((x) => x.id !== selectedIdForDelete));
     });
   }
 
@@ -122,7 +129,10 @@ function List({ match }) {
                         <Icon name="edit" />
                       </Button>
                       <Button
-                        onClick={() => deleteUser(user.id)}
+                        onClick={() => {
+                          setSelectedIdForDelete(user.id);
+                          setOpenDelete(true);
+                        }}
                         className="basicStyle users__row-delete"
                         icon
                         loading={user.isDeleting}
@@ -152,18 +162,22 @@ function List({ match }) {
       )}
       <AddEdit
         Id={selectedUserId}
-        onSave={(selectedUserId) => {
+        onSave={() => {
           setshowModal(false);
-          //update user data
-          fetchUserById(selectedUserId);
+          if (selectedUserId === -1) {
+            fetchUser();
+          } else {
+            //update user data
+            fetchUserById();
+          }
         }}
         open={showModal}
         onClose={() => setshowModal(false)}
       />
       <Confirm
-        open={opendelete}
+        open={openDelete}
         onCancel={() => setOpenDelete(false)}
-        onConfirm={onDelete}
+        onConfirm={deleteUser}
       />
     </Segment>
   );

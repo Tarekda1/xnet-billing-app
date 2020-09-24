@@ -17,7 +17,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
   const [packages, setpackages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [user, setUser] = useState({});
+  //const [user, setUser] = useState({});
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -25,7 +25,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
     package: "",
     address: "",
     isActive: false,
-    usename: "",
+    userName: "",
     email: "",
     password: "",
   });
@@ -38,17 +38,30 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
       value: pkg.id,
     }));
     if (edit && selectedIds && selectedIds.length > 0) {
-      const tempUser = await ispService.getUserById(selectedIds.pop());
-      tempUser && setUser(tempUser);
+      const tempUser = await ispService.getUserById(selectedIds[0]);
+      console.log(tempUser);
+      tempUser &&
+        setFormData({
+          firstName: tempUser.firstName,
+          lastName: tempUser.lastName,
+          phoneNumber: tempUser.phoneNumber,
+          package: tempUser.package,
+          address: tempUser.address,
+          isUserActive: tempUser.isActive,
+          userName: tempUser.userName,
+          email: tempUser.email,
+          password: tempUser.password,
+        });
     }
     setpackages(packagesData);
     setLoading(false);
   };
 
   useEffect(() => {
+    console.log(`selectedId: ${[...selectedIds]}`);
     fetchPackages();
     return () => {};
-  }, []);
+  }, [open]);
 
   const fillEntity = (key, value) => {
     setFormData({ ...formData, [key]: value });
@@ -61,9 +74,15 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
 
   const onAddUser = async (e) => {
     e.preventDefault();
+    console.log(formData);
     setSubmitting(true);
     try {
-      const resp = await ispService.createUser(formData);
+      let resp;
+      if (edit) {
+        resp = await ispService.updateUser(selectedIds[0], formData);
+      } else {
+        resp = await ispService.createUser(formData);
+      }
       setSubmitting(false);
       onSubmit();
     } catch (err) {
@@ -84,7 +103,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                   <label>First Name</label>
                   <Input
                     placeholder="first name"
-                    value={user.firstName}
+                    value={formData.firstName}
                     onChange={(e) => {
                       fillEntity("firstName", e.target.value);
                     }}
@@ -94,6 +113,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                   <label>Last Name</label>
                   <Input
                     placeholder="last name"
+                    value={formData.lastName}
                     onChange={(e) => {
                       fillEntity("lastName", e.target.value);
                     }}
@@ -103,6 +123,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                   <label>Phone Number</label>
                   <Input
                     placeholder="phone number"
+                    value={formData.phoneNumber}
                     onChange={(e) => {
                       fillEntity("phoneNumber", e.target.value);
                     }}
@@ -112,6 +133,8 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                   <label>Password</label>
                   <Input
                     placeholder="password"
+                    type="password"
+                    value={formData.password}
                     onChange={(e) => {
                       fillEntity("password", e.target.value);
                     }}
@@ -120,7 +143,8 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                 <Form.Field>
                   <label>Is Active</label>
                   <Checkbox
-                    placeholder="address"
+                    placeholder="isActive"
+                    checked={formData.isUserActive}
                     onChange={(e) => {
                       fillEntity("isActive", e.target.value);
                     }}
@@ -133,8 +157,9 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                     <label>Username</label>
                     <Input
                       placeholder="username"
+                      value={formData.userName}
                       onChange={(e) => {
-                        fillEntity("username", e.target.value);
+                        fillEntity("userName", e.target.value);
                       }}
                     />
                   </Form.Field>
@@ -151,6 +176,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                   <label>Email</label>
                   <Input
                     placeholder="email"
+                    value={formData.email}
                     onChange={(e) => {
                       fillEntity("email", e.target.value);
                     }}
@@ -161,6 +187,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                   <Input
                     size="large"
                     placeholder="address"
+                    value={formData.address}
                     onChange={(e) => {
                       fillEntity("address", e.target.value);
                     }}

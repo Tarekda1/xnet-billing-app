@@ -55,7 +55,7 @@ function createSchema(req, res, next) {
     phoneNumber: Joi.string().required(),
     email: Joi.string().required(),
     password: Joi.string().required(),
-    username: Joi.string().required(),
+    userName: Joi.string().required(),
     package: Joi.objectId().required(),
   });
   validateRequest(req, next, schema);
@@ -86,6 +86,7 @@ function updateSchema(req, res, next) {
     email: Joi.string().email().empty(""),
     password: Joi.string().min(6).empty(""),
     package: Joi.objectId().empty(),
+    userName: Joi.string().empty(""),
   };
 
   // only admins can update role
@@ -213,7 +214,7 @@ function update(req, res, next) {
   if (req.user.role !== Role.Admin) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-
+  console.log(req.body);
   ispUsersService
     .update(req.params.id, req.body)
     .then((user) => res.json(user))
