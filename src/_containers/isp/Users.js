@@ -14,14 +14,18 @@ import {
   Dropdown,
 } from "semantic-ui-react";
 import "./users.less";
+import { ispService } from "@/_services/";
 import AddUserModel from "@/_components/ui/add_user_model/AddUserModel";
 import AddPackageModal from "@/_components/ui/add_package_modal/AddPackageModal";
+import { Loading } from "@/_components/ui/loading/Loading";
 import _ from "lodash";
 
 const Users = () => {
   const users = useSelector((state) => state.isp.users);
+  const showLoading = useSelector((state) => state.global.showLoading);
   const [showUserModel, setShowUserModel] = useState(false);
   const [showPackageModel, setShowPackageModel] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [selected, setSelected] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -63,11 +67,38 @@ const Users = () => {
   const handleOnDropDownAction = (e, data) => {
     console.log(data.value);
     console.log([...selected]);
-    if (data.value === "edit") {
-      setIsEdit(true);
-      setShowUserModel(true);
+    switch (data.value) {
+      case "edit":
+        setIsEdit(true);
+        setShowUserModel(true);
+        break;
+      case "delete":
+        //remove selected User
+        deleteSelectedUser();
+        break;
     }
   };
+
+  const deleteSelectedUser = async () => {
+    try {
+      //show loading before
+      if (selected.length == 0) {
+        //show error (no item selected)
+        return;
+      }
+      dispatch(globalActions.shouldLoad(true));
+      const deleted = await ispService.deleteUser(selected.pop());
+      dispatch(globalActions.shouldLoad(false));
+      dispatch(globalActions.fetchInternetUsers());
+      console.log(deleted);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      //hide loading
+      dropDownRef.current.clearValue();
+    }
+  };
+
   const options = [
     { key: "edit", icon: "edit", text: "Edit User", value: "edit" },
     { key: "delete", icon: "delete", text: "Remove User", value: "delete" },
@@ -137,6 +168,8 @@ const Users = () => {
                 edit={isEdit}
                 onClose={() => {
                   dropDownRef.current.clearValue();
+                  setIsEdit(false);
+                  setSelected([]);
                   setShowUserModel(false);
                 }}
               />
@@ -151,36 +184,40 @@ const Users = () => {
           </Grid.Column>
         </Grid.Row>
       </Grid>
-      <Table>
-        <Table.Header>
-          <Table.Row>
-            {tableHeader.map((header, i) => (
-              <Table.HeaderCell key={i}>{header}</Table.HeaderCell>
-            ))}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {users.map((user) => {
-            return (
-              <Table.Row key={user.id}>
-                <Table.Cell collapsing>
-                  <Checkbox
-                    onChange={(e, d) => handleCheckBox(e, d, user.id)}
-                  />
-                </Table.Cell>
-                <Table.Cell>{user.firstName}</Table.Cell>
-                <Table.Cell>{user.lastName}</Table.Cell>
-                <Table.Cell>{user.phoneNumber}</Table.Cell>
-                <Table.Cell>
-                  {user.package ? user.package.displayName : "N/A"}
-                </Table.Cell>
-                <Table.Cell>{user.address}</Table.Cell>
-                <Table.Cell>{user.created}</Table.Cell>
-              </Table.Row>
-            );
-          })}
-        </Table.Body>
-      </Table>
+      {showLoading ? (
+        <Loading />
+      ) : (
+        <Table>
+          <Table.Header>
+            <Table.Row>
+              {tableHeader.map((header, i) => (
+                <Table.HeaderCell key={i}>{header}</Table.HeaderCell>
+              ))}
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {users.map((user) => {
+              return (
+                <Table.Row key={user.id}>
+                  <Table.Cell collapsing>
+                    <Checkbox
+                      onChange={(e, d) => handleCheckBox(e, d, user.id)}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>{user.firstName}</Table.Cell>
+                  <Table.Cell>{user.lastName}</Table.Cell>
+                  <Table.Cell>{user.phoneNumber}</Table.Cell>
+                  <Table.Cell>
+                    {user.package ? user.package.displayName : "N/A"}
+                  </Table.Cell>
+                  <Table.Cell>{user.address}</Table.Cell>
+                  <Table.Cell>{user.created}</Table.Cell>
+                </Table.Row>
+              );
+            })}
+          </Table.Body>
+        </Table>
+      )}
     </Container>
   );
 };

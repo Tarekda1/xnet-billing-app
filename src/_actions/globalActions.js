@@ -46,9 +46,11 @@ const globalActions = {
   fetchInternetUsers: () => {
     return async (dispatch, getState) => {
       try {
+        dispatch(globalActions.shouldLoad(true));
         const data = await ispService.getAllUsers();
         console.log(data);
-        return dispatch(globalActions.loadInternetUser(data));
+        dispatch(globalActions.loadInternetUser(data));
+        dispatch(globalActions.shouldLoad(false));
       } catch (err) {
         if (err === 403) {
           dispatch(userActions.logout());

@@ -127,7 +127,7 @@ function basicDetails(user) {
 }
 
 async function getAll() {
-  const users = await db.User.find({}).populate("package");
+  const users = await db.User.find({ isDeleted: false }).populate("package");
   return users.map((x) => basicDetails(x));
 }
 
@@ -274,7 +274,8 @@ async function updatePackage(id, params) {
 
 async function _delete(id) {
   const user = await getUser(id);
-  await user.remove();
+  user.isDeleted = true;
+  await user.save();
 }
 
 async function deletePackage(id) {

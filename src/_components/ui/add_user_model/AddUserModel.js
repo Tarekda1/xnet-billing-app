@@ -18,43 +18,49 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   //const [user, setUser] = useState({});
-  const [formData, setFormData] = useState({
+  const initialValue = {
     firstName: "",
     lastName: "",
     phoneNumber: "",
     package: "",
     address: "",
-    isActive: false,
+    isUserActive: false,
     userName: "",
     email: "",
     password: "",
-  });
+  };
+  const [formData, setFormData] = useState(initialValue);
 
   const fetchPackages = async () => {
-    const packages = await ispService.getAllPackages();
-    const packagesData = packages.map((pkg) => ({
-      text: pkg.displayName,
-      key: pkg.id,
-      value: pkg.id,
-    }));
-    if (edit && selectedIds && selectedIds.length > 0) {
-      const tempUser = await ispService.getUserById(selectedIds[0]);
-      console.log(tempUser);
-      tempUser &&
-        setFormData({
-          firstName: tempUser.firstName,
-          lastName: tempUser.lastName,
-          phoneNumber: tempUser.phoneNumber,
-          package: tempUser.package,
-          address: tempUser.address,
-          isUserActive: tempUser.isActive,
-          userName: tempUser.userName,
-          email: tempUser.email,
-          password: tempUser.password,
-        });
+    try {
+      const packages = await ispService.getAllPackages();
+      const packagesData = packages.map((pkg) => ({
+        text: pkg.displayName,
+        key: pkg.id,
+        value: pkg.id,
+      }));
+      setpackages(packagesData);
+      if (edit && selectedIds && selectedIds.length > 0) {
+        const tempUser = await ispService.getUserById(selectedIds[0]);
+        console.log(tempUser);
+        tempUser &&
+          setFormData({
+            firstName: tempUser.firstName,
+            lastName: tempUser.lastName,
+            phoneNumber: tempUser.phoneNumber,
+            package: tempUser.package ? tempUser.package.id : "",
+            address: tempUser.address,
+            isUserActive: tempUser.isUserActive,
+            userName: tempUser.userName,
+            email: tempUser.email,
+            password: tempUser.password,
+          });
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
     }
-    setpackages(packagesData);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -69,7 +75,8 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
   };
 
   const handlechange = (event, obj) => {
-    setFormData({ ...formData, package: obj.value });
+    const selectedPackage = packages.filter((pkg) => (pkg.id = obj.value));
+    setFormData({ ...formData, package: selectedPackage[0].value });
   };
 
   const onAddUser = async (e) => {
@@ -93,7 +100,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
 
   return (
     <Modal open={open}>
-      <Header>Add User</Header>
+      <Header>{edit ? "Edit User" : "Add User"}</Header>
       <Modal.Content>
         <Form>
           <Grid>
@@ -157,7 +164,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                     <label>Username</label>
                     <Input
                       placeholder="username"
-                      value={formData.userName}
+                      value={formData.userName || ""}
                       onChange={(e) => {
                         fillEntity("userName", e.target.value);
                       }}
@@ -167,6 +174,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                     fluid
                     loading={loading}
                     label="Package"
+                    value={formData.package !== "" ? formData.package : ""}
                     options={packages}
                     placeholder="Select Package"
                     onChange={handlechange}
@@ -176,7 +184,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                   <label>Email</label>
                   <Input
                     placeholder="email"
-                    value={formData.email}
+                    value={formData.email || ""}
                     onChange={(e) => {
                       fillEntity("email", e.target.value);
                     }}
@@ -187,7 +195,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
                   <Input
                     size="large"
                     placeholder="address"
-                    value={formData.address}
+                    value={formData.address || ""}
                     onChange={(e) => {
                       fillEntity("address", e.target.value);
                     }}
@@ -204,13 +212,27 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
             className="basicStyle usermodel__actions-button"
             loading={submitting}
             icon
-            onClick={onAddUser}
+            onClick={(e) => {
+              onAddUser(e);
+              setFormData(initialValue);
+            }}
           >
-            <Icon name="plus" /> Add
+            {edit ? (
+              <React.Fragment>
+                <Icon name="save" /> Save
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <Icon name="plus" /> Add
+              </React.Fragment>
+            )}
           </Button>
           <Button
             className="basicStyle usermodel__actions-button"
-            onClick={onClose}
+            onClick={() => {
+              setFormData(initialValue);
+              onClose();
+            }}
           >
             Cancel
           </Button>

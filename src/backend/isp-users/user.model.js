@@ -12,6 +12,7 @@ const schema = new Schema({
   phoneNumber: { type: String },
   created: { type: Date, default: Date.now },
   updated: Date,
+  isDeleted: { type: Boolean, default: false },
   package: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Package",
