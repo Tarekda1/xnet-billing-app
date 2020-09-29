@@ -12,12 +12,14 @@ import {
   Checkbox,
   Icon,
   Dropdown,
+  Message,
 } from "semantic-ui-react";
 import "./users.less";
 import { ispService } from "@/_services/";
 import AddUserModel from "@/_components/ui/add_user_model/AddUserModel";
 import AddPackageModal from "@/_components/ui/add_package_modal/AddPackageModal";
 import { Loading } from "@/_components/ui/loading/Loading";
+import { Options } from "@/_containers/isp/Constants";
 import _ from "lodash";
 
 const Users = () => {
@@ -99,10 +101,6 @@ const Users = () => {
     }
   };
 
-  const options = [
-    { key: "edit", icon: "edit", text: "Edit User", value: "edit" },
-    { key: "delete", icon: "delete", text: "Remove User", value: "delete" },
-  ];
   return (
     <Container className="userslist" fluid style={{ padding: "10px" }}>
       <Grid>
@@ -151,7 +149,7 @@ const Users = () => {
                     console.log(e);
                     handleOnDropDownAction(e, d);
                   }}
-                  options={options}
+                  options={Options}
                   trigger={
                     <Button
                       content="Actions"
@@ -186,7 +184,7 @@ const Users = () => {
       </Grid>
       {showLoading ? (
         <Loading />
-      ) : (
+      ) : users.length > 0 ? (
         <Table>
           <Table.Header>
             <Table.Row>
@@ -217,6 +215,22 @@ const Users = () => {
             })}
           </Table.Body>
         </Table>
+      ) : (
+        <Segment>
+          <Message className="emptyusermsg">
+            <Message.Content>
+              <h4 style={{ margin: 0, padding: 0 }}>You have no Users!</h4>{" "}
+              <Button
+                onClick={() => setShowUserModel(true)}
+                style={{ marginTop: "10px" }}
+                className="basicStyle"
+                icon
+              >
+                <Icon name="add user" /> Add User
+              </Button>
+            </Message.Content>
+          </Message>
+        </Segment>
       )}
     </Container>
   );

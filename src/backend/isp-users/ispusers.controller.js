@@ -49,12 +49,12 @@ module.exports = router;
 
 function createSchema(req, res, next) {
   const schema = Joi.object({
-    address: Joi.string().required(),
+    address: Joi.string().empty(""),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
-    phoneNumber: Joi.string().required(),
-    email: Joi.string().required(),
-    password: Joi.string().required(),
+    phoneNumber: Joi.string().empty(""),
+    email: Joi.string().empty(""),
+    password: Joi.string().empty(""),
     userName: Joi.string().required(),
     package: Joi.objectId().required(),
   });
