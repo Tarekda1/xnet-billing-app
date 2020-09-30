@@ -30,7 +30,17 @@ module.exports = merge(common, {
         use: [
           { loader: "style-loader" }, //3. Inject styles into DOM
           { loader: "css-loader" }, //2. Turns css into commonjs
-          { loader: "less-loader" }, //1. Turns sass into css
+          {
+            loader: "less-loader",
+            options: {
+              lessOptions: {
+                paths: [
+                  path.resolve(__dirname, "src"),
+                  path.resolve(__dirname, "node_modules"),
+                ],
+              },
+            },
+          }, //1. Turns less into css
         ],
       },
     ],

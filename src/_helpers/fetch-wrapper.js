@@ -1,5 +1,7 @@
 import config from "config";
 import { accountService } from "@/_services";
+import { history } from "./history";
+import { getToken } from "./utility";
 
 export const fetchWrapper = {
   get,
@@ -7,10 +9,6 @@ export const fetchWrapper = {
   put,
   delete: _delete,
 };
-
-// const config = {
-//   apiUrl: "http://localhost:",
-// };
 
 function get(url) {
   const requestOptions = {
@@ -69,14 +67,12 @@ function handleResponse(response) {
 
     if (!response.ok) {
       //&& accountService.userValue
-      if (
-        [401, 403].includes(response.status) &&
-        localStorage.getItem("token") != null
-      ) {
+      if ([401, 403].includes(response.status) && getToken() != null) {
         // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
         return accountService.logout();
+      } else if ([401, 403].includes(response.status) && getToken() == null) {
+        history.push("./login");
       }
-
       const error = (data && data.message) || response.statusText;
       return Promise.reject(error);
     }

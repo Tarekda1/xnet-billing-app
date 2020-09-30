@@ -10,6 +10,7 @@ import {
 import { Users } from "./Users";
 import { Package } from "./Package";
 import { Billing } from "./Billing";
+import { ImportUsers } from "./ImportUsers";
 
 function ISP(props) {
   let { path, url } = useRouteMatch();
@@ -28,6 +29,7 @@ function ISP(props) {
               <Route path={`${path}/users`} component={Users} />
               <Route path={`${path}/package`} component={Package} />
               <Route path={`${path}/accounting`} component={Billing} />
+              <Route path={`${path}/importusers`} component={ImportUsers} />
             </Switch>
           </div>
         </div>

@@ -22,7 +22,7 @@ import { Loading } from "@/_components/ui/loading/Loading";
 import { Options } from "@/_containers/isp/Constants";
 import _ from "lodash";
 
-const Users = () => {
+const Users = ({ history }) => {
   const users = useSelector((state) => state.isp.users);
   const showLoading = useSelector((state) => state.global.showLoading);
   const [showUserModel, setShowUserModel] = useState(false);
@@ -134,7 +134,7 @@ const Users = () => {
                 floated="right"
                 icon
                 className="userslist__action-button basicStyle"
-                onClick={(_) => console.log("click")}
+                onClick={(_) => history.push("importusers")}
               >
                 <Icon name="upload" /> Import Users
               </Button>

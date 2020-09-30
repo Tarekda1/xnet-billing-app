@@ -1,4 +1,4 @@
-export const formatDate = (date, format) => {
+const formatDate = (date, format) => {
   console.log(date);
   const map = {
     mm: date.getMonth() + 1,
@@ -9,3 +9,7 @@ export const formatDate = (date, format) => {
 
   return format.replace(/mm|dd|yy|yyy/gi, (matched) => map[matched]);
 };
+
+const getToken = () => localStorage.getItem("token");
+
+export { formatDate, getToken };
