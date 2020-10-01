@@ -14,15 +14,32 @@ import {
   Message,
 } from "semantic-ui-react";
 import { UploadFile } from "@/_components/ui/upload_file/UploadFile";
-import ExcelHelper from "@/_helpers/excel-helper";
+import DataHelper from "@/_helpers/excel-helper";
 import "./importusers.less";
+import { UploadedUsers } from "../../_components";
 
 const ImportUsers = () => {
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(false);
   const [uploadedUsers, setUploadedUsers] = useState([]);
   const dropDownRef = useRef(null);
-  const excelHelper = new ExcelHelper();
+  const excelHelper = new DataHelper();
+  const uploadRef = useRef(null);
+
+  const handleOnDropDownAction = (e, data) => {
+    console.log(data.value);
+    console.log([...selected]);
+    switch (data.value) {
+      case "edit":
+        setIsEdit(true);
+        setShowUserModel(true);
+        break;
+      case "delete":
+        //remove selected User
+        deleteSelectedUser();
+        break;
+    }
+  };
 
   const handleUpload = async (e) => {
     console.log(e.target.files[0]);
@@ -30,6 +47,7 @@ const ImportUsers = () => {
       e.target.files[0]
     );
     console.log(uploadedUsersFromExcel);
+
     setUploadedUsers(uploadedUsersFromExcel);
   };
 
@@ -53,6 +71,17 @@ const ImportUsers = () => {
                 onClick={(_) => console.log("click")}
               >
                 <Icon name="disk" /> Save
+              </Button>
+              <Button
+                floated="right"
+                icon
+                className="userslist__action-button basicStyle"
+                onClick={(_) => {
+                  console.log(uploadRef);
+                  uploadRef.current.click();
+                }}
+              >
+                <Icon name="file excel" /> Import new file
               </Button>
               <Button.Group className="actionsgroup">
                 <Dropdown
@@ -81,42 +110,23 @@ const ImportUsers = () => {
         <Grid.Row>
           <Grid.Column>
             <Segment className="uploadsegment">
-              {uploadedUsers.length == 0 ? (
-                <div className="uploadwrapper">
-                  <UploadFile
-                    button={{}}
-                    input={{
-                      id: "upload",
-                      onInput: handleUpload,
-                    }}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <Table>
-                    <Table.Header>
-                      {uploadedUsers.map((row, index) => {
-                        if (index == 0)
-                          return (
-                            <Table.Row>
-                              <Table.Cell>{row[index]}</Table.Cell>
-                            </Table.Row>
-                          );
-                      })}
-                    </Table.Header>
-                    <Table.Body>
-                      {uploadedUsers.map((row, index) => {
-                        if (index > 0)
-                          return (
-                            <Table.Row>
-                              <Table.Cell>{row[0]}</Table.Cell>
-                            </Table.Row>
-                          );
-                      })}
-                    </Table.Body>
-                  </Table>
-                </div>
-              )}
+              <div className="uploadwrapper">
+                <UploadFile
+                  button={{}}
+                  visible={uploadedUsers.length == 0}
+                  inputRef={uploadRef}
+                  input={{
+                    id: "upload",
+                    onInput: handleUpload,
+                  }}
+                />
+              </div>
+              <div>
+                <UploadedUsers
+                  headerData={uploadedUsers.shift()}
+                  body={uploadedUsers}
+                />
+              </div>
             </Segment>
           </Grid.Column>
         </Grid.Row>
