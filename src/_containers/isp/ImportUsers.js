@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Options } from "./Constants";
+import { Options, HeaderListTemplate } from "./Constants";
 import {
   Segment,
   Table,
@@ -13,15 +13,21 @@ import {
   Dropdown,
   Message,
 } from "semantic-ui-react";
+import { useSelector, useDispatch } from "react-redux";
+import { globalActions } from "@/_actions/globalActions";
 import { UploadFile } from "@/_components/ui/upload_file/UploadFile";
 import DataHelper from "@/_helpers/excel-helper";
 import "./importusers.less";
 import { UploadedUsers } from "../../_components";
+import { Loading } from "@/_components/ui/loading/Loading";
 
 const ImportUsers = () => {
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(false);
   const [uploadedUsers, setUploadedUsers] = useState([]);
+  const [showUserModel, setShowUserModel] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const dropDownRef = useRef(null);
   const excelHelper = new DataHelper();
   const uploadRef = useRef(null);
@@ -36,19 +42,53 @@ const ImportUsers = () => {
         break;
       case "delete":
         //remove selected User
-        deleteSelectedUser();
+        deleteSelectedUser(selected[0]);
         break;
+    }
+  };
+
+  const deleteSelectedUser = async (index) => {
+    try {
+      console.log(`index: ${index}`);
+      console.log(selected);
+      //show loading before
+      if (selected.length == 0) {
+        //show error (no item selected)
+        console.log(`error no item selected`);
+        return;
+      }
+      dispatch(globalActions.shouldLoad(true));
+      uploadedUsers.splice(index, 1);
+      console.log(uploadedUsers);
+      setUploadedUsers(uploadedUsers);
+      dispatch(globalActions.shouldLoad(false));
+      console.log("deleted");
+    } catch (err) {
+      console.log(`err: ${err}`);
+    } finally {
+      //hide loading
+      setSelected([]);
+      if (dropDownRef) dropDownRef.current.clearValue();
     }
   };
 
   const handleUpload = async (e) => {
     console.log(e.target.files[0]);
-    const uploadedUsersFromExcel = await excelHelper.parseExcelFile(
-      e.target.files[0]
-    );
-    console.log(uploadedUsersFromExcel);
+    const { data } = await excelHelper.parseExcelFile(e.target.files[0]);
+    console.log(data);
+    setUploadedUsers(data);
+  };
 
-    setUploadedUsers(uploadedUsersFromExcel);
+  const handleSelect = (shouldEnable, selectedId) => {
+    if (shouldEnable) {
+      console.log(`should enable and add id: ${selectedId}`);
+      setSelected((prevState) => [selectedId]);
+    } else {
+      if (selectedId === -1) {
+        setSelected([]);
+        dropDownRef.current.clearValue();
+      }
+    }
   };
 
   return (
@@ -91,7 +131,6 @@ const ImportUsers = () => {
                   ref={dropDownRef}
                   disabled={selected.length == 0}
                   onChange={(e, d) => {
-                    console.log(e);
                     handleOnDropDownAction(e, d);
                   }}
                   options={Options}
@@ -122,10 +161,15 @@ const ImportUsers = () => {
                 />
               </div>
               <div>
-                <UploadedUsers
-                  headerData={uploadedUsers.shift()}
-                  body={uploadedUsers}
-                />
+                {uploadedUsers.length > 0 ? (
+                  <UploadedUsers
+                    headerData={HeaderListTemplate}
+                    body={uploadedUsers}
+                    enableAction={handleSelect}
+                  />
+                ) : (
+                  ""
+                )}
               </div>
             </Segment>
           </Grid.Column>

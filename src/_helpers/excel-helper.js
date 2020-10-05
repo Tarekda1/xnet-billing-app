@@ -8,7 +8,7 @@ export default class DataHelper {
       for (const row of rows) {
         console.log(row);
       }
-      return rows;
+      return { header: rows.unshift(), data: rows.slice(1) };
     });
   };
 

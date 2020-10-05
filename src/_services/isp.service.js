@@ -12,6 +12,7 @@ export const ispService = {
   getUserById,
   createUser,
   updateUser,
+  createBatchUsers,
   deleteUser,
   getAllPackages,
   createPackage,
@@ -36,6 +37,11 @@ function getUserById(id) {
 function createUser(params) {
   return fetchWrapper.post(`${baseUrl}/users`, params);
 }
+
+function createBatchUsers(params) {
+  return fetchWrapper.post(`${baseUrl}/users/batch`, params);
+}
+
 function createUserAccount(params) {
   return fetchWrapper.post(`${baseUrl}/accounting/`, params);
 }
