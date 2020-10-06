@@ -6,12 +6,14 @@ const sendEmail = require("_helpers/send-email");
 const db = require("_helpers/db");
 const Role = require("_helpers/role");
 const moment = require("moment");
+const { async } = require("rxjs");
 
 module.exports = {
   getAll,
   getById,
   create,
   update,
+  createBatchUser,
   delete: _delete,
   createPackage,
   getAllPackages,
@@ -32,13 +34,17 @@ async function create(params) {
   //console.log(params);
   const user = new db.User(params);
 
-  // hash password
-  user.passwordHash = hash(params.password);
-
   // save account
   await user.save();
 
   return basicDetails(user);
+}
+
+async function createBatchUser(params) {
+  const users = JSON.parse(params);
+  users.forEach((user) => {
+    console.log(user);
+  });
 }
 
 async function createPackage(params) {
@@ -153,18 +159,6 @@ async function search(searchterm) {
   if (!searchterm) {
     throw "Invalid search term";
   }
-
-  // const userAccs = await db.UserAccount.find({
-  //   $or: [
-  //     {
-  //       "user.firstName": { $regex: /searchterm/ },
-  //       "user.lastName": { $regex: /searchterm/ },
-  //       "user.phoneNumber": { $regex: /searchterm/ },
-  //     },
-  //   ],
-  // })
-  //   .populate("user")
-  //   .populate("package");
   const userAccs = db.UserAccount.aggregate([
     { $unwind: "$user" },
     {

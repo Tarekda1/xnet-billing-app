@@ -17,17 +17,21 @@ import { useSelector, useDispatch } from "react-redux";
 import { globalActions } from "@/_actions/globalActions";
 import { UploadFile } from "@/_components/ui/upload_file/UploadFile";
 import DataHelper from "@/_helpers/excel-helper";
+import { createBatchUsers } from "@/_services/";
 import "./importusers.less";
 import { UploadedUsers } from "../../_components";
 import { Loading } from "@/_components/ui/loading/Loading";
+import { async } from "rxjs";
+import { ispService } from "../../_services/isp.service";
 
 const ImportUsers = () => {
   const dispatch = useDispatch();
   const [selected, setSelected] = useState([]);
-  const [loading, setLoading] = useState(false);
+  //const [loading, setLoading] = useState(false);
   const [uploadedUsers, setUploadedUsers] = useState([]);
   const [showUserModel, setShowUserModel] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const dropDownRef = useRef(null);
   const excelHelper = new DataHelper();
   const uploadRef = useRef(null);
@@ -49,12 +53,12 @@ const ImportUsers = () => {
 
   const deleteSelectedUser = async (index) => {
     try {
-      console.log(`index: ${index}`);
-      console.log(selected);
+      // console.log(`index: ${index}`);
+      // console.log(selected);
       //show loading before
       if (selected.length == 0) {
         //show error (no item selected)
-        console.log(`error no item selected`);
+        //console.log(`error no item selected`);
         return;
       }
       dispatch(globalActions.shouldLoad(true));
@@ -91,6 +95,23 @@ const ImportUsers = () => {
     }
   };
 
+  const onSave = async () => {
+    try {
+      //show loading
+      dispatch(globalActions.shouldLoad(true));
+      setIsSaving(true);
+      const resp = await ispService.createBatchUsers(
+        JSON.stringify(uploadedUsers)
+      );
+      //hide loading
+      dispatch(globalActions.shouldLoad(false));
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <Container className="importedUserslist" fluid style={{ padding: "10px" }}>
       <Grid>
@@ -107,8 +128,9 @@ const ImportUsers = () => {
               <Button
                 floated="right"
                 icon
+                loading={isSaving}
                 className="userslist__action-button basicStyle"
-                onClick={(_) => console.log("click")}
+                onClick={onSave}
               >
                 <Icon name="disk" /> Save
               </Button>

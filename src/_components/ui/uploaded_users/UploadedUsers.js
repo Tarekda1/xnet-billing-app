@@ -17,7 +17,7 @@ const UploadedUsers = ({ headerData, body, enableAction }) => {
 
   useEffect(() => {
     setSelectedIndexId(-1);
-  }, [body]);
+  }, [body.length]);
 
   return (
     <React.Fragment>
