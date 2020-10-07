@@ -13,7 +13,7 @@ module.exports = {
   getById,
   create,
   update,
-  createBatchUser,
+  createBatchUsers,
   delete: _delete,
   createPackage,
   getAllPackages,
@@ -40,11 +40,21 @@ async function create(params) {
   return basicDetails(user);
 }
 
-async function createBatchUser(params) {
-  const users = JSON.parse(params);
-  users.forEach((user) => {
-    console.log(user);
-  });
+async function createBatchUsers(users) {
+  // users.forEach((user) => {
+  //   console.log(user.firstName);
+  // });
+  if (users.length === 0) {
+    return { message: "empty list" };
+  }
+
+  try {
+    const resp = await db.User.insertMany(users);
+  } catch (err) {
+    return { message: err };
+  }
+
+  return { message: "Success", status: "200" };
 }
 
 async function createPackage(params) {

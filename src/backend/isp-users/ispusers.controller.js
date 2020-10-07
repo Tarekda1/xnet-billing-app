@@ -5,7 +5,6 @@ Joi.objectId = require("joi-objectid")(Joi);
 const validateRequest = require("_middleware/validate-request");
 const authorize = require("_middleware/authorize");
 const Role = require("_helpers/role");
-const cors = require("cors");
 const ispUsersService = require("./ispusers.service");
 const { func } = require("prop-types");
 
@@ -13,7 +12,7 @@ router.get("/users", authorize(Role.Admin), getAll);
 router.get("/users/:id", authorize(), getById);
 router.post("/users/", authorize(Role.Admin), createSchema, createUser);
 router.post(
-  "/users/batch",
+  "/users/batchUsers/",
   authorize(Role.Admin),
   batchSchema,
   createBatchUser
@@ -69,7 +68,18 @@ function createSchema(req, res, next) {
 }
 
 function batchSchema(req, res, next) {
-  const schema = Joi.json();
+  const schema = Joi.array().items(
+    Joi.object({
+      address: Joi.string().empty(""),
+      firstName: Joi.string().required(),
+      lastName: Joi.string().required(),
+      phoneNumber: Joi.string().empty(""),
+      email: Joi.string().empty(""),
+      password: Joi.string().empty(""),
+      userName: Joi.string().required(),
+      package: Joi.objectId().empty(""),
+    })
+  );
   validateRequest(req, next, schema);
 }
 
@@ -147,7 +157,9 @@ function createUser(req, res, next) {
 function createBatchUser(req, res, next) {
   ispUsersService
     .createBatchUsers(req.body)
-    .then(() => res.json({ message: "Successfully added user" }))
+    .then(() =>
+      res.json({ message: "Successfully added users batch", code: 200 })
+    )
     .catch(next);
 }
 

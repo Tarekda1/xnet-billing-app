@@ -13,6 +13,7 @@ import {
 } from "semantic-ui-react";
 import "./add-user-model.less";
 import { ispService } from "@/_services/";
+import { showNotification } from "@/_components";
 const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
   const [packages, setpackages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -89,6 +90,7 @@ const AddUserModel = ({ open, onSubmit, onClose, edit, selectedIds }) => {
         resp = await ispService.updateUser(selectedIds[0], formData);
       } else {
         resp = await ispService.createUser(formData);
+        showNotification({ _title: "Xnet", msg: "User successfuly added" });
       }
       setSubmitting(false);
       onSubmit();

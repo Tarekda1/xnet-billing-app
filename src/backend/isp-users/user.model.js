@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const schema = new Schema({
+const userSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   address: { type: String },
@@ -19,11 +19,13 @@ const schema = new Schema({
   },
 });
 
-schema.virtual("isUserActive").get(function () {
+userSchema.index({ firstName: 1, lastName: 1, userName: 1 }, { unique: true });
+
+userSchema.virtual("isUserActive").get(function () {
   return !!this.isActive;
 });
 
-schema.set("toJSON", {
+userSchema.set("toJSON", {
   virtuals: true,
   versionKey: false,
   transform: function (doc, ret) {
@@ -32,4 +34,4 @@ schema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("User", schema);
+module.exports = mongoose.model("User", userSchema);

@@ -39,7 +39,7 @@ function createUser(params) {
 }
 
 function createBatchUsers(params) {
-  return fetchWrapper.post(`${baseUrl}/users/batch`, params);
+  return fetchWrapper.post(`${baseUrl}/users/batchUsers`, params);
 }
 
 function createUserAccount(params) {

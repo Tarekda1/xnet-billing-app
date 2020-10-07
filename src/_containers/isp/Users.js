@@ -18,7 +18,7 @@ import "./users.less";
 import { ispService } from "@/_services/";
 import AddUserModel from "@/_components/ui/add_user_model/AddUserModel";
 import AddPackageModal from "@/_components/ui/add_package_modal/AddPackageModal";
-import { Loading } from "@/_components/ui/loading/Loading";
+import { Loading } from "@/_components/";
 import { Options } from "@/_containers/isp/Constants";
 import _ from "lodash";
 

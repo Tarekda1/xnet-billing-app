@@ -16,12 +16,15 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import { ISP } from "@/_containers/isp";
 import { TopNavigation } from "@/_components";
+import ReactNotification from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 function App({ trans }) {
   return (
     <Provider store={store}>
       <Router>
         <AppSidebar>
+          <ReactNotification />
           <TopNavigation i18n={trans} />
           <Switch>
             <PrivateRoute exact path="/dashboard" component={Dashboard} />

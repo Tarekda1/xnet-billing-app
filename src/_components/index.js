@@ -6,3 +6,4 @@ export * from "./ui/loading/Loading";
 export * from "./ui/avatar/Avatar";
 export * from "./ui/upload_file/UploadFile";
 export * from "./ui/uploaded_users/UploadedUsers";
+export * from "./ui/notification_wrapper/notificationWrapper";

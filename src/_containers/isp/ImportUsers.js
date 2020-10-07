@@ -19,12 +19,12 @@ import { UploadFile } from "@/_components/ui/upload_file/UploadFile";
 import DataHelper from "@/_helpers/excel-helper";
 import { createBatchUsers } from "@/_services/";
 import "./importusers.less";
-import { UploadedUsers } from "../../_components";
+import { UploadedUsers } from "@/_components";
 import { Loading } from "@/_components/ui/loading/Loading";
-import { async } from "rxjs";
-import { ispService } from "../../_services/isp.service";
+import { ispService } from "@/_services/isp.service";
+import { userAccParser } from "@/_helpers";
 
-const ImportUsers = () => {
+const ImportUsers = ({ history }) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = useState([]);
   //const [loading, setLoading] = useState(false);
@@ -100,9 +100,13 @@ const ImportUsers = () => {
       //show loading
       dispatch(globalActions.shouldLoad(true));
       setIsSaving(true);
-      const resp = await ispService.createBatchUsers(
-        JSON.stringify(uploadedUsers)
-      );
+      console.log(typeof uploadedUsers);
+      const jsonObj = userAccParser(uploadedUsers);
+      const resp = await ispService.createBatchUsers(jsonObj);
+      if (resp && resp.code === 200) {
+        console.log(resp.code);
+        history.push("./users");
+      }
       //hide loading
       dispatch(globalActions.shouldLoad(false));
     } catch (err) {
