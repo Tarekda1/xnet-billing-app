@@ -72,22 +72,37 @@ async function createPackage(params) {
 }
 
 async function createUserAccount(params) {
-  console.log(`today: ${params.billDate}`);
+  const billDate = params.billDate;
+  console.log(
+    `today: ${new Date(billDate).getFullYear()} Month: ${new Date(
+      billDate
+    ).getMonth()}`
+  );
+  const year = new Date(billDate).getFullYear();
+  const month = new Date(billDate).getMonth();
+  //const day = new Date(billDate).getDay();
   // validate
   const userAcc = await db.UserAccount.findOne({
     user: params.user,
     billDate: params.billDate,
   });
+  if (userAcc) {
+    console.log(
+      `userAcc: ${JSON.stringify(userAcc)} ${new Date(
+        userAcc.billDate
+      ).getMonth()} ${new Date(userAcc.billDate).getFullYear()}`
+    );
+  }
 
   if (
     userAcc &&
     userAcc.billDate &&
-    userAcc.billDate.getMonth() == params.billDate.getMonth() &&
-    userAcc.billDate.getYear() == params.billDate.getYear()
+    new Date(userAcc.billDate).getMonth() == month &&
+    new Date(userAcc.billDate).getFullYear() == year
   ) {
     throw (
       'User for this billDate:"' +
-      moment(params.billDate, "DD-MM-YYYY") +
+      moment(params.billDate, "YYYY-mm-dd") +
       '" is already added'
     );
   }

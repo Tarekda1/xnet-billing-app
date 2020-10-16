@@ -88,7 +88,9 @@ function createUserAccountSchema(req, res, next) {
     user: Joi.objectId().required(),
     amount: Joi.number().required(),
     comment: Joi.string().required(),
-    billDate: Joi.date(),
+    billDate: Joi.date()
+      .iso()
+      .error((err) => err),
   });
   validateRequest(req, next, schema);
 }

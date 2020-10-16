@@ -73,8 +73,10 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const formatedDate = formatDate(new Date(), "dd/mm/yyyy");
-      console.log(formatedDate);
+      const formatedDate = formatDate(new Date(), "yyyy-mm-dd");
+      //const dateFormat = "YYYY-MM-DD";
+      const date = new Date();
+      console.log(date);
       const body = { ...formData, billDate: formatedDate };
       console.log(`body: ${JSON.stringify(body)}`);
       if (edit) {
@@ -107,7 +109,7 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
                     fluid
                     loading={loading}
                     label="User"
-                    disabled={!edit}
+                    disabled={edit}
                     defaultValue={edit ? userAcc.user.id : ""}
                     options={usersData}
                     placeholder="Select User"
@@ -153,16 +155,19 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
         </Form>
       </Modal.Content>
       <Modal.Actions>
-        <div style={{ float: "right" }}>
-          <Button loading={submitting} icon onClick={onAddUserUserAccount}>
-            Save
-            <Icon name="save" />
+        <Segment style={{ float: "right", padding: "5px" }}>
+          <Button
+            className="basicStyle"
+            loading={submitting}
+            icon
+            onClick={onAddUserUserAccount}
+          >
+            <Icon name="add" /> Add
           </Button>
-          <Button onClick={onClose} icon>
+          <Button className="basicStyle" onClick={onClose} icon>
             Cancel
-            <Icon name="close" />
           </Button>
-        </div>
+        </Segment>
       </Modal.Actions>
     </Modal>
   );
