@@ -100,11 +100,11 @@ async function createUserAccount(params) {
     new Date(userAcc.billDate).getMonth() == month &&
     new Date(userAcc.billDate).getFullYear() == year
   ) {
-    throw (
-      'User for this billDate:"' +
-      moment(params.billDate, "YYYY-mm-dd") +
-      '" is already added'
-    );
+    throw `User bill for this date:"${moment.utc(
+      billDate,
+      "DD-MM-YYYY",
+      true
+    )}" is already added.`;
   }
   const user = new db.UserAccount(params);
 

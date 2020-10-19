@@ -10,6 +10,8 @@ import {
   Grid,
   Dropdown,
   Icon,
+  Label,
+  Message,
 } from "semantic-ui-react";
 import { ispService } from "@/_services/";
 import { formatDate } from "@/_helpers/utility";
@@ -20,6 +22,7 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
   const [usersData, setUsersData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [err, setErr] = useState("");
   const [formData, setFormData] = useState({
     user: "",
     paid: false,
@@ -52,6 +55,7 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
 
   useEffect(() => {
     mountedRef.current = true;
+    setErr("");
     fetchUsers();
     return () => {
       mountedRef.current = false;
@@ -72,6 +76,7 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
   const onAddUserUserAccount = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setErr(err);
     try {
       const formatedDate = formatDate(new Date(), "yyyy-mm-dd");
       //const dateFormat = "YYYY-MM-DD";
@@ -80,14 +85,17 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
       const body = { ...formData, billDate: formatedDate };
       console.log(`body: ${JSON.stringify(body)}`);
       if (edit) {
-        await ispService.updateUserAcc(userAcc.id, body);
+        const resp = await ispService.updateUserAcc(userAcc.id, body);
+        console.log(`resp:${resp}`);
       } else {
-        await ispService.createUserAccount(body);
+        const resp = await ispService.createUserAccount(body);
+        console.log(`resp:${resp}`);
       }
       setSubmitting(false);
       onSubmit();
     } catch (err) {
-      console.log(err);
+      console.log(`err: ${err}`);
+      setErr(err);
       setSubmitting(false);
     }
   };
@@ -149,6 +157,9 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
                     }}
                   />
                 </Form.Field>
+                <Message negative hidden={err !== "" ? false : true}>
+                  <Message.Content>{err}</Message.Content>
+                </Message>
               </Grid.Column>
             </Grid.Row>
           </Grid>
