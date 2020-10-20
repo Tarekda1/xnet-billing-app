@@ -31,6 +31,7 @@ export const Billing = ({ match }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [searchterm, setSearchterm] = useState("");
   const [searching, setSearching] = useState(false);
+  const [selectedId, setSelectedId] = useState(-1);
   const onAddUserAccModalClose = () => {
     setOpenAddModal(false);
   };
@@ -57,7 +58,15 @@ export const Billing = ({ match }) => {
     settempUserAccs(userAccounts);
   }, [userAccounts]);
 
-  const deleteUserAcc = (e) => {};
+  const deleteUserAcc = (id, e) => {
+    console.log("deleting use account");
+    const userAcc = userAccounts.filter((ua) => ua.id === id)[0];
+    if (userAcc) {
+      setIsDeleting(true);
+      setSelectedId(id);
+      dispatch(globalActions.deleteUserAcc(id, userAcc));
+    }
+  };
 
   const onPaidChecked = (e, id) => {
     console.log("updating use account");
@@ -79,7 +88,12 @@ export const Billing = ({ match }) => {
       setSearching(true);
       const filteredAccs = userAccounts.filter((userAcc) => {
         console.log(userAcc);
-        return userAcc.user.firstName.toLowerCase().indexOf(searchterm) != -1;
+        return (
+          userAcc.user.firstName
+            .toLowerCase()
+            .includes(searchterm.toLowerCase()) ||
+          userAcc.user.lastName.toLowerCase().includes(searchterm.toLowerCase())
+        );
       });
       settempUserAccs(filteredAccs);
       setTimeout(() => setSearching(false), 300);
@@ -130,7 +144,10 @@ export const Billing = ({ match }) => {
               <Button
                 className="basicStyle"
                 icon
-                onClick={() => setOpenAddModal(true)}
+                onClick={() => {
+                  setIsEdit(false);
+                  setOpenAddModal(true);
+                }}
               >
                 <Icon name="plus" /> Add User Account
               </Button>
@@ -235,16 +252,13 @@ export const Billing = ({ match }) => {
                             <Icon name="edit" />
                           </Button>
                           <Button
-                            onClick={(id) => deleteUserAcc(id)}
+                            onClick={(e) => deleteUserAcc(id, e)}
                             icon
                             className="useraccounts__button useraccounts__button-delete"
                             disabled={isDeleting}
+                            loading={isDeleting && id === selectedId}
                           >
-                            {isDeleting ? (
-                              <span className="spinner-border spinner-border-sm" />
-                            ) : (
-                              <Icon name="user delete" />
-                            )}
+                            <Icon name="user delete" />
                           </Button>
                         </div>
                       </Table.Cell>

@@ -73,6 +73,14 @@ const globalActions = {
       dispatch(globalActions.fetchInternetUserAccounts());
     };
   },
+  deleteUserAcc: (id, userAcc) => {
+    return async (dispatch, getState) => {
+      console.log(id);
+      const data = await ispService.deleteUserAcc(id);
+      console.log(data);
+      dispatch(globalActions.fetchInternetUserAccounts());
+    };
+  },
   searchForUser: (term) => {
     return async (dispatch, getState) => {
       console.log(term);

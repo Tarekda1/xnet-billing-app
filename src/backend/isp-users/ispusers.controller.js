@@ -47,6 +47,7 @@ router.put(
   updateUserAccSchema,
   updateUserAccount
 );
+router.delete("/accounting/:id", authorize(Role.Admin), deleteUserAcc);
 
 //todo
 //Generate UserAccount from users table
@@ -298,5 +299,17 @@ function deletePackage(req, res, next) {
   ispUsersService
     .deletePackage(req.params.id)
     .then(() => res.json({ message: "Package deleted successfully" }))
+    .catch(next);
+}
+
+function deleteUserAcc(req, res, next) {
+  // Only Admin can delete User Accounts for Billing
+  if (req.user.role !== Role.Admin) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  console.log("deleting user acc");
+  ispUsersService
+    .deleteUserAcc(req.params.id)
+    .then(() => res.json({ message: "User Acc deleted successfully" }))
     .catch(next);
 }

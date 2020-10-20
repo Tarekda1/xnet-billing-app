@@ -20,6 +20,7 @@ export const ispService = {
   getAllUserAccounts,
   updateUserAcc,
   searchUserAccount,
+  deleteUserAcc,
 };
 
 function getAllUsers() {
@@ -63,6 +64,11 @@ function updateUserAcc(id, params) {
     .then((userAcc) => {
       return userAcc;
     });
+}
+function deleteUserAcc(id) {
+  return fetchWrapper.delete(`${baseUrl}/accounting/${id}`).then((res) => {
+    return res;
+  });
 }
 
 function deleteUser(id) {
