@@ -14,7 +14,8 @@ function AppSidebar(props) {
 	const history = useHistory();
 	//const token = localStorage.getItem('token');
 	const user = useSelector((state) => state.user.userInfo);
-	const token = useSelector((state) => state.user.token);
+	//const token = useSelector((state) => state.user.token);
+	const token = sessionStorage.getItem('token');
 	const dispatch = useDispatch();
 	//console.log(token);
 

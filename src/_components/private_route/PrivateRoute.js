@@ -38,9 +38,11 @@
 // export { PrivateRoute };
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-	const token = localStorage.getItem('token');
+	const token = sessionStorage.getItem('token');
+	//const token = useSelector((state) => state.user.token);
 	return (
 		<Route
 			{...rest}

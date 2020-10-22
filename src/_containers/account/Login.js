@@ -26,9 +26,10 @@ function Login({ history, location }) {
 	useEffect(
 		() => {
 			if (isVisible.current) {
-				if (token && localStorage.getItem('token')) {
+				if (token && sessionStorage.getItem('token')) {
 					history.push('/');
-				} else if (token && !localStorage.getItem('token')) {
+				} else {
+					//if (token && !sessionStorage.getItem('token'))
 					dispatch(userActions.performLogout());
 				}
 			}
