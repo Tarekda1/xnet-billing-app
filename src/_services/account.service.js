@@ -3,6 +3,7 @@ import { BehaviorSubject } from "rxjs";
 //import config from 'config';
 import { fetchWrapper, history } from "@/_helpers";
 import user from "../reducers/user";
+import { func } from "prop-types";
 const config = {
   apiUrl: "http://localhost:4000",
 };
@@ -24,6 +25,7 @@ export const accountService = {
   update,
   delete: _delete,
   user: userSubject.asObservable(),
+  checkUser,
   get userValue() {
     return userSubject.value;
   },
@@ -111,6 +113,10 @@ function update(id, params) {
     console.log(`user1: ${JSON.stringify(user)}`);
     return user;
   });
+}
+
+function checkUser() {
+  return fetchWrapper.post(`${baseUrl}/checkUser`);
 }
 
 // prefixed with underscore because 'delete' is a reserved word in javascript

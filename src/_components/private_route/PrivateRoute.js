@@ -1,7 +1,7 @@
 // import React, { useState, useEffect } from 'react';
 // import { Route, Redirect } from 'react-router-dom';
 
-// import { accountService } from '@/_services';
+//import { accountService } from "@/_services";
 
 // const PrivateRoute = ({ component: Component, roles, ...rest }) => {
 // 	let user = localStorage.getItem('user');
@@ -36,17 +36,25 @@
 // };
 
 // export { PrivateRoute };
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Route, Redirect } from "react-router-dom";
+import { accountService } from "@/_services";
 
-const PrivateRoute = ({ component: Component, ...rest }) => {
-	const token = localStorage.getItem('token');
-	return (
-		<Route
-			{...rest}
-			render={(props) => (token != null ? <Component {...props} /> : <Redirect to="/account/login" />)}
-		/>
-	);
+const PrivateRoute = ({ component: Component, history, ...rest }) => {
+  const token = localStorage.getItem("token");
+
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        token != null ? (
+          <Component {...props} />
+        ) : (
+          <Redirect to="/account/login" />
+        )
+      }
+    />
+  );
 };
 
 export { PrivateRoute };

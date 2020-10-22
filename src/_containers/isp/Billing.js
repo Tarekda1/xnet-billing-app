@@ -183,17 +183,15 @@ export const Billing = ({ match }) => {
           <Segment>
             <Message>
               <Message.Header>
-                <div className="emptyUsersMessage">
+                <span className="emptyUsersMessage">
                   No User Accounts for Billing :(
                   <br />
-                  <p>
-                    <div>
-                      <Button icon className="basicStyle">
-                        <Icon name="cog" /> Generate Monthly Bill
-                      </Button>
-                    </div>
-                  </p>
-                </div>
+                  <div>
+                    <Button icon className="basicStyle">
+                      <Icon name="cog" /> Generate Monthly Bill
+                    </Button>
+                  </div>
+                </span>
               </Message.Header>
             </Message>
           </Segment>

@@ -3,6 +3,7 @@ import types from "@/_actions/types.js";
 const initialState = {
   token: "",
   userInfo: {},
+  needCheckUser: true,
 };
 
 export default (state = initialState, action) => {

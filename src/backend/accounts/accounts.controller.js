@@ -10,6 +10,7 @@ const accountService = require("./account.service");
 router.post("/authenticate", authenticateSchema, authenticate);
 router.post("/refresh-token", refreshToken);
 router.post("/revoke-token", authorize(), revokeTokenSchema, revokeToken);
+router.post("/checkuser", authorize(), checkUser);
 router.post("/register", registerSchema, register);
 router.post("/verify-email", verifyEmailSchema, verifyEmail);
 router.post("/forgot-password", forgotPasswordSchema, forgotPassword);
@@ -45,6 +46,17 @@ function authenticate(req, res, next) {
       res.json(account);
     })
     .catch(next);
+}
+
+function checkUser(req, res, next) {
+  // let resp = accountService.checkUser(req);
+  // if (!resp.user) {
+  //   return res.status(400).json({ message: "User not found" });
+  // }
+  // if (!resp.token) {
+  //   return res.status(401).json({ message: "Unauthorized" });
+  // }
+  return res.status(200).json({ user });
 }
 
 function refreshToken(req, res, next) {
@@ -264,7 +276,7 @@ function setTokenCookie(res, token) {
   // create cookie with refresh token that expires in 7 days
   const cookieOptions = {
     httpOnly: true,
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + 10 * 1000), //7 * 24 * 60 * 60 *
   };
   res.cookie("refreshToken", token, cookieOptions);
 }
