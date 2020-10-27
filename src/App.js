@@ -25,7 +25,7 @@ function App({ trans }) {
     <Provider store={store}>
       <Router>
         <AppSidebar>
-          {/* <CheckUser /> */}
+          <CheckUser />
           <ReactNotification />
           <TopNavigation i18n={trans} />
           <Switch>

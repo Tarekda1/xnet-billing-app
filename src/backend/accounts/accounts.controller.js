@@ -49,14 +49,8 @@ function authenticate(req, res, next) {
 }
 
 function checkUser(req, res, next) {
-  // let resp = accountService.checkUser(req);
-  // if (!resp.user) {
-  //   return res.status(400).json({ message: "User not found" });
-  // }
-  // if (!resp.token) {
-  //   return res.status(401).json({ message: "Unauthorized" });
-  // }
-  return res.status(200).json({ user });
+  //dummy request if reached here then token is not expired
+  return res.status(200).json({ user: req.user });
 }
 
 function refreshToken(req, res, next) {

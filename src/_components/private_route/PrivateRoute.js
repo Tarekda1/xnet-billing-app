@@ -36,13 +36,13 @@
 // };
 
 // export { PrivateRoute };
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Route, Redirect } from "react-router-dom";
-import { accountService } from "@/_services";
+import { useDispatch, useSelector } from "react-redux";
 
-const PrivateRoute = ({ component: Component, history, ...rest }) => {
-  const token = localStorage.getItem("token");
-
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  const token = sessionStorage.getItem("token");
+  //const token = useSelector((state) => state.user.token);
   return (
     <Route
       {...rest}

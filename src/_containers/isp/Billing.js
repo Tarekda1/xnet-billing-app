@@ -14,7 +14,7 @@ import {
 } from "semantic-ui-react";
 import "./billing.css";
 import AddUserAccountModal from "@/_components/ui/add_user_account_modal/AddUserAccountModal";
-import { Link } from "react-router-dom";
+import { Loading } from "@/_components/";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "@/_actions/globalActions";
 import { ispService } from "@/_services/isp.service";
@@ -26,6 +26,7 @@ export const Billing = ({ match }) => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const userAccounts = useSelector((state) => state.isp.userAccounts);
+  const showLoading = useSelector((state) => state.global.showLoading);
   const [tempUserAccs, settempUserAccs] = useState([]);
   const [selectUserAcc, setSelectedUserAcc] = useState({});
   const [isEdit, setIsEdit] = useState(false);
@@ -179,11 +180,13 @@ export const Billing = ({ match }) => {
             onClick={onSearchSubmit}
           />
         </div>
-        {!tempUserAccs.length > 0 ? (
+        {showLoading ? (
+          <Loading />
+        ) : !tempUserAccs.length > 0 && !showLoading ? (
           <Segment>
             <Message>
               <Message.Header>
-                <span className="emptyUsersMessage">
+                <div className="emptyUsersMessage">
                   No User Accounts for Billing :(
                   <br />
                   <div>
@@ -191,7 +194,7 @@ export const Billing = ({ match }) => {
                       <Icon name="cog" /> Generate Monthly Bill
                     </Button>
                   </div>
-                </span>
+                </div>
               </Message.Header>
             </Message>
           </Segment>

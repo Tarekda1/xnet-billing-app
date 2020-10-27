@@ -11,10 +11,10 @@ export default (state = initialState, action) => {
   switch (type) {
     case types.SUCCESSFUL_LOGIN:
       const { token, ...userInfo } = payload;
-      localStorage.setItem("token", token);
+      sessionStorage.setItem("token", token);
       return { ...state, token: token, userInfo: userInfo.info };
     case types.PERFORM_LOGOUT:
-      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       return {
         token: "",
         userInfo: {},

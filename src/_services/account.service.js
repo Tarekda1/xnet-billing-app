@@ -1,12 +1,11 @@
 import { BehaviorSubject } from "rxjs";
-
-//import config from 'config';
 import { fetchWrapper, history } from "@/_helpers";
 import user from "../reducers/user";
 import { func } from "prop-types";
 const config = {
   apiUrl: "http://localhost:4000",
 };
+import { getToken, clearToken } from "@/_helpers";
 const userSubject = new BehaviorSubject(null);
 const baseUrl = `${config.apiUrl}/accounts`;
 
@@ -42,10 +41,12 @@ function login(email, password) {
 
 function logout(callback) {
   // revoke token, stop refresh timer, publish null to user subscribers and redirect to login page
-  localStorage.removeItem("token");
+  //localStorage.removeItem("token");
   fetchWrapper.post(`${baseUrl}/revoke-token`, {}).then(
     () => {
       //stopRefreshTokenTimer();
+      clearToken();
+      callback && callback();
     },
     () => {
       callback && callback();
@@ -58,7 +59,7 @@ function refreshToken() {
     // publish user to subscribers and start timer to refresh token
     //userSubject.next(user);
     //startRefreshTokenTimer();
-    localStorage.setItem("user", JSON.stringify(user));
+    //localStorage.setItem("user", JSON.stringify(user));
     return user;
   });
 }

@@ -5,17 +5,19 @@ import { accountService } from "@/_services";
 
 export const CheckUser = () => {
   const history = useHistory();
-  const [user, setUser] = useState(null);
+  //const [user, setUser] = useState(null);
   useEffect(() => {
     //post to check user and if not authorized redirect to login
     async function validateUser() {
       try {
-        const userResp = accountService.checkUser();
-        console.log(user);
-        // if (!user) {
-        //   history.push("/login");
-        // }
-        setUser(userResp);
+        const userResp = await accountService.checkUser();
+        //console.log(userResp);
+        if (!userResp) {
+          //history.push("/login");
+          accountService.logout(() => {
+            history.push("/login");
+          });
+        }
       } catch (err) {
         console.log(err);
       }

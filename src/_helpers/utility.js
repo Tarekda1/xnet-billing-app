@@ -10,6 +10,7 @@ const formatDate = (date, format) => {
   return format.replace(/mm|dd|yy|yyy/gi, (matched) => map[matched]);
 };
 
-const getToken = () => localStorage.getItem("token");
+const getToken = () => sessionStorage.getItem("token");
+const clearToken = () => sessionStorage.removeItem("token");
 
-export { formatDate, getToken };
+export { formatDate, getToken, clearToken };
