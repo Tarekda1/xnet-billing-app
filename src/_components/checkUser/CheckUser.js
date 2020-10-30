@@ -1,28 +1,35 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { accountService } from "@/_services";
+import userActions from "@/_actions/userActions";
 
 export const CheckUser = () => {
   const history = useHistory();
+  const needCheckUser = useSelector((state) => state.user.needCheckUser);
+  const dispatch = useDispatch();
   //const [user, setUser] = useState(null);
   useEffect(() => {
     //post to check user and if not authorized redirect to login
     async function validateUser() {
       try {
         const userResp = await accountService.checkUser();
-        //console.log(userResp);
+        console.log(userResp);
         if (!userResp) {
-          //history.push("/login");
-          accountService.logout(() => {
-            history.push("/login");
-          });
+          // accountService.logout(() => {
+          //   history.push("/login");
+          // });
+          dispatch(userActions.performLogout());
         }
       } catch (err) {
-        console.log(err);
+        if (err == "Unauthorized") {
+          dispatch(userActions.performLogout());
+        }
+        console.log(`err :${err}`);
       }
     }
-    validateUser();
+    if (needCheckUser) validateUser();
     return () => {};
   }, []);
   return <Fragment></Fragment>;

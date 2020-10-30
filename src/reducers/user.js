@@ -18,6 +18,7 @@ export default (state = initialState, action) => {
       return {
         token: "",
         userInfo: {},
+        needCheckUser: false,
       };
     case types.UPDATE_PROFILE:
       return { ...state, userInfo: payload };
