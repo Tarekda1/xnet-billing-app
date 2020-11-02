@@ -256,7 +256,7 @@ export const Billing = ({ match }) => {
                             onClick={(e) => deleteUserAcc(id, e)}
                             icon
                             className="useraccounts__button useraccounts__button-delete"
-                            disabled={isDeleting}
+                            disabled={isDeleting && id === selectedId}
                             loading={isDeleting && id === selectedId}
                           >
                             <Icon name="user delete" />

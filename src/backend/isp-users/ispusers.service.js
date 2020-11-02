@@ -26,6 +26,7 @@ module.exports = {
   getUserAccById,
   deleteUserAcc,
   search,
+  generateUserBill,
 };
 
 async function create(params) {
@@ -43,9 +44,6 @@ async function create(params) {
 }
 
 async function createBatchUsers(users) {
-  // users.forEach((user) => {
-  //   console.log(user.firstName);
-  // });
   if (users.length === 0) {
     return { message: "empty list" };
   }
@@ -75,6 +73,7 @@ async function createPackage(params) {
 
 async function createUserAccount(params) {
   const billDate = new Date(params.billDate);
+  console.log(params.billDate);
   console.log(params.user);
   console.log(
     `today now: ${new Date().getFullYear()} Month: ${new Date().getUTCMonth()}`
@@ -89,12 +88,14 @@ async function createUserAccount(params) {
         comment: 3,
         amount: 4,
         month: { $month: "$billDate" },
+        year: { $year: "$billDate" },
       },
     },
     {
       $match: {
         user: mongoose.mongo.ObjectId(params.user),
         month: billDate.getMonth() + 1,
+        year: billDate.getFullYear(),
       },
     },
   ]);
@@ -112,6 +113,48 @@ async function createUserAccount(params) {
   await user.save();
 
   return basicAccountDetails(user);
+}
+
+async function generateUserBill(params) {
+  const paramsbillDate = params.date;
+  //get all users from users table that are not deleted
+  const users = db.User.find({ isDeleted: false });
+
+  let usersAccsToInsert = [];
+  for (let user of users) {
+    const userAcc = await db.UserAccount.aggregate([
+      {
+        $project: {
+          user: 1,
+          paid: 2,
+          comment: 3,
+          amount: 4,
+          month: { $month: "$billDate" },
+          year: { $year: "$billDate" },
+        },
+      },
+      {
+        $match: {
+          user: user._id,
+          month: paramsbillDate.getMonth() + 1,
+          year: paramsbillDate.getFullYear(),
+        },
+      },
+    ]);
+    if (!userAcc) {
+      const userAcc = new db.UserAccount({
+        user: user._id,
+      });
+      usersAccsToInsert.push(userAcc);
+    }
+
+    if (usersAccsToInsert.length > 0) {
+      db.UserAccount.insertMany(user);
+    }
+  }
+
+  //then insert many for this current month
+  db.UserAccount.insertMany(usersAccsToInsert);
 }
 
 function basicPackageDetails(package) {
@@ -163,7 +206,8 @@ async function getAll() {
 }
 
 async function getAllUserAccounts() {
-  const users = await db.UserAccount.find()
+  let month = new Date().getMonth() + 1;
+  const users = await db.UserAccount.find({ $month: "billDate" })
     .populate("user")
     .populate("package");
   return users.map((x) => {

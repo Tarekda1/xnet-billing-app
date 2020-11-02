@@ -21,6 +21,7 @@ export const ispService = {
   updateUserAcc,
   searchUserAccount,
   deleteUserAcc,
+  generateMonthlyBillForUser,
 };
 
 function getAllUsers() {
@@ -79,6 +80,16 @@ function deleteUser(id) {
 
 function getAllPackages() {
   return fetchWrapper.get(`${baseUrl}/packages`);
+}
+
+/**
+ * Generate list of user accounts for billing for the date sent(month and year)
+ * unique users are added for unique month and year
+ * @param {*} date
+ * @returns list of generated user accounts
+ */
+function generateMonthlyBillForUser(date) {
+  return fetchWrapper.get(`${baseUrl}/generateMonthlyBill`);
 }
 
 function searchUserAccount(user) {

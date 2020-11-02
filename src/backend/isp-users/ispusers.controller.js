@@ -7,6 +7,7 @@ const authorize = require("_middleware/authorize");
 const Role = require("_helpers/role");
 const ispUsersService = require("./ispusers.service");
 const { func } = require("prop-types");
+const ispusersService = require("./ispusers.service");
 
 router.get("/users", authorize(Role.Admin), getAll);
 router.get("/users/:id", authorize(), getById);
@@ -46,6 +47,12 @@ router.put(
   authorize(),
   updateUserAccSchema,
   updateUserAccount
+);
+router.post(
+  "/generateMonthlyBill",
+  authorize(Role.Admin),
+  generateUserBillSchema,
+  generateUserBill
 );
 router.delete("/accounting/:id", authorize(Role.Admin), deleteUserAcc);
 
@@ -146,6 +153,20 @@ function updatePackageSchema(req, res, next) {
   }
 
   const schema = Joi.object(schemaRules); //.with('password', 'confirmPassword');
+  validateRequest(req, next, schema);
+}
+
+function generateUserBillSchema(req, res, next) {
+  const schemaRules = {
+    date: Joi.date().empty(),
+  };
+
+  // only admins can generate bills
+  if (req.user.role === Role.Admin) {
+    schemaRules.role = Joi.string().valid(Role.Admin, Role.User).empty("");
+  }
+
+  const schema = Joi.object(schemaRules);
   validateRequest(req, next, schema);
 }
 
@@ -311,5 +332,12 @@ function deleteUserAcc(req, res, next) {
   ispUsersService
     .deleteUserAcc(req.params.id)
     .then(() => res.json({ message: "User Acc deleted successfully" }))
+    .catch(next);
+}
+
+function generateUserBill(req, res, next) {
+  ispusersService
+    .generateUserBill()
+    .then(() => res.json({ message: "Generated monthly bill successfully" }))
     .catch(next);
 }
