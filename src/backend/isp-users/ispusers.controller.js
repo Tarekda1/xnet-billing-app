@@ -49,8 +49,8 @@ router.put(
   updateUserAccount
 );
 router.post(
-  "/generateMonthlyBill",
-  authorize(Role.Admin),
+  "/generateMonthlyBill/",
+  authorize(),
   generateUserBillSchema,
   generateUserBill
 );
@@ -212,7 +212,7 @@ function getAll(req, res, next) {
 
 function getAllUserAccounts(req, res, next) {
   ispUsersService
-    .getAllUserAccounts()
+    .getAllUserAccounts(req.body)
     .then((userAccounts) => res.json(userAccounts))
     .catch(next);
 }
@@ -337,7 +337,7 @@ function deleteUserAcc(req, res, next) {
 
 function generateUserBill(req, res, next) {
   ispusersService
-    .generateUserBill()
+    .generateUserBill(req.body)
     .then(() => res.json({ message: "Generated monthly bill successfully" }))
     .catch(next);
 }

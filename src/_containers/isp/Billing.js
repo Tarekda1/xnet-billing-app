@@ -109,6 +109,11 @@ export const Billing = ({ match }) => {
     }
   };
 
+  const generateMonthlyBill = () => {
+    let date = new Date();
+    dispatch(globalActions.generateMonthlyBill({ date }));
+  };
+
   const tableHeader = [
     "First Name",
     "Last Name",
@@ -128,7 +133,7 @@ export const Billing = ({ match }) => {
         <List floated="right" horizontal>
           <List.Item>
             <List.Content>
-              <Button icon className="basicStyle">
+              <Button onClick={generateMonthlyBill} icon className="basicStyle">
                 <Icon name="cog" /> Generate Monthly Bill
               </Button>
             </List.Content>
@@ -190,7 +195,11 @@ export const Billing = ({ match }) => {
                   No User Accounts for Billing :(
                   <br />
                   <div>
-                    <Button icon className="basicStyle">
+                    <Button
+                      onClick={generateMonthlyBill}
+                      icon
+                      className="basicStyle"
+                    >
                       <Icon name="cog" /> Generate Monthly Bill
                     </Button>
                   </div>
@@ -211,12 +220,10 @@ export const Billing = ({ match }) => {
               {tempUserAccs.map(
                 (
                   {
-                    user: {
-                      firstName,
-                      lastName,
-                      phoneNumber,
-                      address: userAddress,
-                    },
+                    firstName,
+                    lastName,
+                    phoneNumber,
+                    address,
                     comment,
                     paid,
                     amount,
