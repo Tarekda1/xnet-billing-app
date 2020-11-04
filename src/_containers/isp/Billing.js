@@ -84,20 +84,23 @@ export const Billing = ({ match }) => {
     if (userAcc) dispatch(globalActions.updateUserAcc(id, userAccPost));
   };
 
-  const onSearchSubmit = () => {
-    if (searchterm) {
-      setSearching(true);
-      const filteredAccs = userAccounts.filter((userAcc) => {
-        console.log(userAcc);
-        return (
-          userAcc.user.firstName
-            .toLowerCase()
-            .includes(searchterm.toLowerCase()) ||
-          userAcc.user.lastName.toLowerCase().includes(searchterm.toLowerCase())
-        );
-      });
-      settempUserAccs(filteredAccs);
-      setTimeout(() => setSearching(false), 300);
+  const onSearchSubmit = (e) => {
+    //console.log(e.target.name);
+    if ((e && e.key === "Enter") || (e && e.target.name === "searchButton")) {
+      if (searchterm) {
+        setSearching(true);
+        const filteredAccs = userAccounts.filter((userAcc) => {
+          console.log(userAcc);
+          return (
+            userAcc.firstName
+              .toLowerCase()
+              .includes(searchterm.toLowerCase()) ||
+            userAcc.lastName.toLowerCase().includes(searchterm.toLowerCase())
+          );
+        });
+        settempUserAccs(filteredAccs);
+        setTimeout(() => setSearching(false), 300);
+      }
     }
   };
 
@@ -177,6 +180,7 @@ export const Billing = ({ match }) => {
             iconPosition="left"
             loading={searching}
             placeholder="Search users..."
+            onKeyPress={onSearchSubmit}
           />
           <Button
             className="useraccounts__search primary-button"

@@ -338,6 +338,12 @@ function deleteUserAcc(req, res, next) {
 function generateUserBill(req, res, next) {
   ispusersService
     .generateUserBill(req.body)
-    .then(() => res.json({ message: "Generated monthly bill successfully" }))
+    .then((usersToAdd) => {
+      if (usersToAdd > 0) {
+        res.json({ message: "Generated monthly bill successfully" });
+      } else {
+        res.json({ message: "User acc bills already added, or no users" });
+      }
+    })
     .catch(next);
 }

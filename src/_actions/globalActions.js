@@ -1,7 +1,7 @@
 import types from "./types";
 import { ispService } from "@/_services";
 import userActions from "@/_actions/userActions";
-import { async } from "rxjs";
+import { showNotification } from "@/_helpers";
 
 const globalActions = {
   changeLanguage: (data) => {
@@ -105,7 +105,10 @@ const globalActions = {
     return async (dispatch, getState) => {
       console.log(date);
       const data = await ispService.generateMonthlyBill(date);
-      console.log(data);
+      if (data && data.hasOwnProperty("message")) {
+        showNotification({ title: "", message: data.message });
+      }
+      //console.log(data);
       dispatch(globalActions.fetchInternetUserAccounts());
     };
   },

@@ -116,13 +116,14 @@ async function createUserAccount(params) {
 }
 
 async function generateUserBill(params) {
-  console.log(params);
   const paramsbillDate = params.date;
+  //console.log(`month: ${paramsbillDate.getMonth()}`);
   //get all users from users table that are not deleted
   const users = await db.User.find({ isDeleted: false });
-
+  //console.log(JSON.stringify(users));
   let usersAccsToInsert = [];
   for (let user of users) {
+    console.log(user._id);
     let userAcc = await db.UserAccount.aggregate([
       {
         $project: {
@@ -142,21 +143,22 @@ async function generateUserBill(params) {
         },
       },
     ]);
-    if (!userAcc) {
-      const user = {
+    //console.log(`userAcc: ${JSON.stringify(userAcc)}`);
+    if (userAcc.length === 0) {
+      const userToAdd = {
         user: user._id,
       };
-      usersAccsToInsert.push(user);
+      usersAccsToInsert.push(userToAdd);
     }
   }
 
-  console.log(usersAccsToInsert);
+  console.log(`User Accs number to add: ${usersAccsToInsert.length}`);
 
   //then insert many for this current month
   if (usersAccsToInsert.length > 0) {
     await db.UserAccount.insertMany(usersAccsToInsert);
   }
-  // db.UserAccount.insertMany(usersAccsToInsert);
+  return Promise.resolve(usersAccsToInsert.length);
 }
 
 function basicPackageDetails(package) {
@@ -165,14 +167,15 @@ function basicPackageDetails(package) {
 }
 
 function basicAccountDetails(userAccount, fromAggregate) {
-  console.log(userAccount);
+  //console.log(userAccount);
   if (fromAggregate) {
     const {
-      userdetails: [{ firstName, lastName, phoneNumber }],
+      userdetails: [{ firstName, lastName, phoneNumber, _id: userId }],
       amount,
       comment,
       paid,
-      billDate,
+      month,
+      year,
       _id: id,
     } = userAccount;
     return {
@@ -182,12 +185,13 @@ function basicAccountDetails(userAccount, fromAggregate) {
       amount,
       comment,
       paid,
-      billDate,
+      billDate: `${year}-${month}-01`,
+      userId,
       id,
     };
   } else {
     const {
-      user: { firstName, lastName, phoneNumber },
+      user: { firstName, lastName, phoneNumber, id: userId },
       amount,
       comment,
       paid,
@@ -202,13 +206,14 @@ function basicAccountDetails(userAccount, fromAggregate) {
       comment,
       paid,
       billDate,
+      userId,
       id,
     };
   }
 }
 
 function basicDetails(user) {
-  console.log(JSON.stringify(user));
+  //console.log(JSON.stringify(user));
   const {
     id,
     firstName,
@@ -247,11 +252,12 @@ async function getAll() {
 async function getAllUserAccounts(params) {
   //let month = new Date().getMonth() + 1;
   //        user: user._id,
-  console.log(params);
+  //console.log(params);
   let paramDate = new Date();
-  console.log(paramDate);
-  console.log(paramDate.getMonth() + 1);
-  console.log(paramDate.getFullYear());
+  let limitPerPage = params.limitPerPage || 50;
+  // console.log(paramDate);
+  // console.log(paramDate.getMonth() + 1);
+  // console.log(paramDate.getFullYear());
   const users = await db.UserAccount.aggregate([
     {
       $lookup: {
@@ -279,6 +285,9 @@ async function getAllUserAccounts(params) {
         year: paramDate.getFullYear(),
       },
     },
+    {
+      $limit: limitPerPage,
+    },
     // {
     //   $replaceRoot: {
     //     newRoot: {
@@ -288,6 +297,7 @@ async function getAllUserAccounts(params) {
     // },
   ]);
   return users.map((x) => {
+    console.log(x);
     return basicAccountDetails(x, true);
   });
 }
