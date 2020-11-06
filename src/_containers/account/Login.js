@@ -29,7 +29,6 @@ function Login({ history, location }) {
 				if (token && sessionStorage.getItem('token')) {
 					history.push('/');
 				} else {
-					//if (token && !sessionStorage.getItem('token'))
 					dispatch(userActions.performLogout());
 				}
 			}
