@@ -250,56 +250,43 @@ async function getAll() {
 }
 
 async function getAllUserAccounts(params) {
-  //let month = new Date().getMonth() + 1;
-  //        user: user._id,
-  //console.log(params);
-  let paramDate = new Date();
-  let limitPerPage = params.limitPerPage || 50;
-  // console.log(paramDate);
-  // console.log(paramDate.getMonth() + 1);
-  // console.log(paramDate.getFullYear());
-  const users = await db.UserAccount.aggregate([
-    {
-      $lookup: {
-        from: "users",
-        localField: "user",
-        foreignField: "_id",
-        as: "userdetails",
-      },
-    },
-    {
-      $project: {
-        user: 1,
-        paid: 2,
-        comment: 3,
-        amount: 4,
-        userdetails: 5,
-        _id: 6,
-        month: { $month: "$billDate" },
-        year: { $year: "$billDate" },
-      },
-    },
-    {
-      $match: {
-        month: paramDate.getMonth() + 1,
-        year: paramDate.getFullYear(),
-      },
-    },
-    {
-      $limit: limitPerPage,
-    },
-    // {
-    //   $replaceRoot: {
-    //     newRoot: {
-    //       $mergeObjects: [{ $arrayElemAt: ["$userdetails", 0] }, "$$ROOT"],
-    //     },
-    //   },
-    // },
-  ]);
-  return users.map((x) => {
-    console.log(x);
-    return basicAccountDetails(x, true);
-  });
+  //let paramDate = new Date();
+  // let limitPerPage = params.limitPerPage || 50;
+  // const users = await db.UserAccount.aggregate([
+  //   {
+  //     $lookup: {
+  //       from: "users",
+  //       localField: "user",
+  //       foreignField: "_id",
+  //       as: "userdetails",
+  //     },
+  //   },
+  //   {
+  //     $project: {
+  //       user: 1,
+  //       paid: 2,
+  //       comment: 3,
+  //       amount: 4,
+  //       userdetails: 5,
+  //       _id: 6,
+  //       month: { $month: "$billDate" },
+  //       year: { $year: "$billDate" },
+  //     },
+  //   },
+  //   {
+  //     $match: {
+  //       month: paramDate.getMonth() + 1,
+  //       year: paramDate.getFullYear(),
+  //     },
+  //   },
+  //   {
+  //     $limit: limitPerPage,
+  //   },
+  // ]);
+  // return users.map((x) => {
+  //   console.log(x);
+  //   return basicAccountDetails(x, true);
+  // });
 }
 
 async function getUserAccById(id) {

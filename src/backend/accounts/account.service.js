@@ -61,20 +61,6 @@ function checkUser(req) {
   return {
     token: accessToken,
   };
-  // try {
-  //   user = jwt.verify(accessToken, config.secret);
-  //   console.log(`user: ${user}`);
-  //   return {
-  //     user: user,
-  //     token: accessToken,
-  //   };
-  // } catch (e) {
-  //   console.log(`error: ${e}`);
-  //   return {
-  //     user: null,
-  //     token: accessToken,
-  //   };
-  // }
 }
 
 async function refreshToken({ token, ipAddress }) {
