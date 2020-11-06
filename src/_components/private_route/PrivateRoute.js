@@ -1,7 +1,7 @@
 // import React, { useState, useEffect } from 'react';
 // import { Route, Redirect } from 'react-router-dom';
 
-// import { accountService } from '@/_services';
+//import { accountService } from "@/_services";
 
 // const PrivateRoute = ({ component: Component, roles, ...rest }) => {
 // 	let user = localStorage.getItem('user');
@@ -36,19 +36,25 @@
 // };
 
 // export { PrivateRoute };
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import React from "react";
+import { Route, Redirect } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-	const token = sessionStorage.getItem('token');
-	//const token = useSelector((state) => state.user.token);
-	return (
-		<Route
-			{...rest}
-			render={(props) => (token != null ? <Component {...props} /> : <Redirect to="/account/login" />)}
-		/>
-	);
+  const token = sessionStorage.getItem("token");
+  //const token = useSelector((state) => state.user.token);
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        token != null ? (
+          <Component {...props} />
+        ) : (
+          <Redirect to="/account/login" />
+        )
+      }
+    />
+  );
 };
 
 export { PrivateRoute };

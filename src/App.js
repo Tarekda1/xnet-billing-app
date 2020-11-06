@@ -18,12 +18,14 @@ import { ISP } from "@/_containers/isp";
 import { TopNavigation } from "@/_components";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
+import { CheckUser } from "@/_components";
 
 function App({ trans }) {
   return (
     <Provider store={store}>
       <Router>
         <AppSidebar>
+          <CheckUser />
           <ReactNotification />
           <TopNavigation i18n={trans} />
           <Switch>

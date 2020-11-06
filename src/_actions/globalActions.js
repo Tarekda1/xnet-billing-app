@@ -1,6 +1,7 @@
 import types from './types';
 import { ispService } from '@/_services';
 import userActions from '@/_actions/userActions';
+import { showNotification } from '@/_helpers';
 
 const globalActions = {
 	changeLanguage: (data) => {
@@ -43,11 +44,11 @@ const globalActions = {
 			payload: data
 		};
 	},
-	fetchInternetUsers: () => {
+	fetchInternetUsers: ({ itemsPagePage, page }) => {
 		return async (dispatch, getState) => {
 			try {
 				dispatch(globalActions.shouldLoad(true));
-				const data = await ispService.getAllUsers();
+				const data = await ispService.getAllUsers({ itemsPagePage, page });
 				console.log(data);
 				dispatch(globalActions.loadInternetUser(data));
 				dispatch(globalActions.shouldLoad(false));
@@ -58,13 +59,19 @@ const globalActions = {
 			}
 		};
 	},
-	fetchInternetUserAccounts: () => {
+	fetchInternetUserAccounts: (params) => {
 		return async (dispatch, getState) => {
-			dispatch(globalActions.shouldLoad(true));
-			const data = await ispService.getAllUserAccounts();
-			console.log(data);
-			dispatch(globalActions.loadInternetUserAccounts(data));
-			dispatch(globalActions.shouldLoad(false));
+			try {
+				dispatch(globalActions.shouldLoad(true));
+				const data = await ispService.getAllUserAccounts(params);
+				console.log(data);
+				dispatch(globalActions.loadInternetUserAccounts(data));
+			} catch (error) {
+				//or popup notification
+				console.log(error);
+			} finally {
+				dispatch(globalActions.shouldLoad(false));
+			}
 		};
 	},
 	updateUserAcc: (id, userAcc) => {
@@ -92,6 +99,17 @@ const globalActions = {
 			});
 			console.log(`datareturned: ${data}`);
 			return dispatch(globalActions.loadInternetUserAccounts(data));
+		};
+	},
+	generateMonthlyBill: (date) => {
+		return async (dispatch, getState) => {
+			console.log(date);
+			const data = await ispService.generateMonthlyBill(date);
+			if (data && data.hasOwnProperty('message')) {
+				showNotification({ title: '', message: data.message });
+			}
+			//console.log(data);
+			dispatch(globalActions.fetchInternetUserAccounts());
 		};
 	}
 };

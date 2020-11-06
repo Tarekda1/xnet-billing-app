@@ -1,53 +1,31 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Joi = require("joi");
-Joi.objectId = require("joi-objectid")(Joi);
-const validateRequest = require("_middleware/validate-request");
-const authorize = require("_middleware/authorize");
-const Role = require("_helpers/role");
-const ispUsersService = require("./ispusers.service");
-const { func } = require("prop-types");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
+const validateRequest = require('_middleware/validate-request');
+const authorize = require('_middleware/authorize');
+const Role = require('_helpers/role');
+const ispUsersService = require('./ispusers.service');
+const { func } = require('prop-types');
+const qs = require('qs');
 
-router.get("/users", authorize(Role.Admin), getAll);
-router.get("/users/:id", authorize(), getById);
-router.post("/users/", authorize(Role.Admin), createSchema, createUser);
-router.post(
-  "/users/batchUsers/",
-  authorize(Role.Admin),
-  batchSchema,
-  createBatchUser
-);
-router.put("/users/:id", authorize(), updateSchema, update);
-router.delete("/users/:id", authorize(), _delete);
-router.get("/packages", authorize(Role.Admin), getAllPackages);
-router.post(
-  "/packages/",
-  authorize(Role.Admin),
-  createPackageSchema,
-  createPackage
-);
-router.get("/packages/:id", authorize(), getPackageById);
-router.put("/packages/:id", authorize(), updatePackageSchema, updatePackage);
-router.delete("/packages/:id", authorize(), deletePackage);
-router.get("/accounting", authorize(Role.Admin), getAllUserAccounts);
-router.get(
-  "/search/:searchterm",
-  authorize(Role.Admin),
-  searchUserAccountByUser
-);
-router.post(
-  "/accounting/",
-  authorize(Role.Admin),
-  createUserAccountSchema,
-  createUserAccount
-);
-router.put(
-  "/accounting/:id",
-  authorize(),
-  updateUserAccSchema,
-  updateUserAccount
-);
-router.delete("/accounting/:id", authorize(Role.Admin), deleteUserAcc);
+router.get('/users', authorize(Role.Admin), getAll);
+router.get('/users/:id', authorize(), getById);
+router.post('/users/', authorize(Role.Admin), createSchema, createUser);
+router.post('/users/batchUsers/', authorize(Role.Admin), batchSchema, createBatchUser);
+router.put('/users/:id', authorize(), updateSchema, update);
+router.delete('/users/:id', authorize(), _delete);
+router.get('/packages', authorize(Role.Admin), getAllPackages);
+router.post('/packages/', authorize(Role.Admin), createPackageSchema, createPackage);
+router.get('/packages/:id', authorize(), getPackageById);
+router.put('/packages/:id', authorize(), updatePackageSchema, updatePackage);
+router.delete('/packages/:id', authorize(), deletePackage);
+router.get('/accounting', authorize(Role.Admin), getAllUserAccounts);
+router.get('/search/:searchterm', authorize(Role.Admin), searchUserAccountByUser);
+router.post('/accounting/', authorize(Role.Admin), createUserAccountSchema, createUserAccount);
+router.put('/accounting/:id', authorize(), updateUserAccSchema, updateUserAccount);
+router.post('/generateMonthlyBill/', authorize(), generateUserBillSchema, generateUserBill);
+router.delete('/accounting/:id', authorize(Role.Admin), deleteUserAcc);
 
 //todo
 //Generate UserAccount from users table
@@ -55,261 +33,253 @@ router.delete("/accounting/:id", authorize(Role.Admin), deleteUserAcc);
 module.exports = router;
 
 function createSchema(req, res, next) {
-  const schema = Joi.object({
-    address: Joi.string().empty(""),
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
-    phoneNumber: Joi.string().empty(""),
-    email: Joi.string().empty(""),
-    password: Joi.string().empty(""),
-    userName: Joi.string().required(),
-    package: Joi.objectId().required(),
-  });
-  validateRequest(req, next, schema);
+	const schema = Joi.object({
+		address: Joi.string().empty(''),
+		firstName: Joi.string().required(),
+		lastName: Joi.string().required(),
+		phoneNumber: Joi.string().empty(''),
+		email: Joi.string().empty(''),
+		password: Joi.string().empty(''),
+		userName: Joi.string().required(),
+		package: Joi.objectId().required()
+	});
+	validateRequest(req, next, schema);
 }
 
 function batchSchema(req, res, next) {
-  const schema = Joi.array().items(
-    Joi.object({
-      address: Joi.string().empty(""),
-      firstName: Joi.string().required(),
-      lastName: Joi.string().required(),
-      phoneNumber: Joi.string().empty(""),
-      email: Joi.string().empty(""),
-      password: Joi.string().empty(""),
-      userName: Joi.string().required(),
-      package: Joi.objectId().empty(""),
-    })
-  );
-  validateRequest(req, next, schema);
+	const schema = Joi.array().items(
+		Joi.object({
+			address: Joi.string().empty(''),
+			firstName: Joi.string().required(),
+			lastName: Joi.string().required(),
+			phoneNumber: Joi.string().empty(''),
+			email: Joi.string().empty(''),
+			password: Joi.string().empty(''),
+			userName: Joi.string().required(),
+			package: Joi.objectId().empty('')
+		})
+	);
+	validateRequest(req, next, schema);
 }
 
 function createUserAccountSchema(req, res, next) {
-  const schema = Joi.object({
-    user: Joi.objectId().required(),
-    amount: Joi.number().required(),
-    comment: Joi.string().required(),
-    billDate: Joi.date()
-      .iso()
-      .error((err) => err),
-  });
-  validateRequest(req, next, schema);
+	const schema = Joi.object({
+		user: Joi.objectId().required(),
+		amount: Joi.number().required(),
+		comment: Joi.string().required(),
+		billDate: Joi.date().iso().error((err) => err)
+	});
+	validateRequest(req, next, schema);
 }
 
 function createPackageSchema(req, res, next) {
-  const schema = Joi.object({
-    displayName: Joi.string().required(),
-  });
-  validateRequest(req, next, schema);
+	const schema = Joi.object({
+		displayName: Joi.string().required()
+	});
+	validateRequest(req, next, schema);
 }
 
 function updateSchema(req, res, next) {
-  const schemaRules = {
-    address: Joi.string().empty(""),
-    firstName: Joi.string().empty(""),
-    lastName: Joi.string().empty(""),
-    email: Joi.string().email().empty(""),
-    password: Joi.string().min(6).empty(""),
-    package: Joi.objectId().empty(),
-    userName: Joi.string().empty(""),
-  };
+	const schemaRules = {
+		address: Joi.string().empty(''),
+		firstName: Joi.string().empty(''),
+		lastName: Joi.string().empty(''),
+		email: Joi.string().email().empty(''),
+		password: Joi.string().min(6).empty(''),
+		package: Joi.objectId().empty(),
+		userName: Joi.string().empty('')
+	};
 
-  // only admins can update role
-  if (req.user.role === Role.Admin) {
-    schemaRules.role = Joi.string().valid(Role.Admin, Role.User).empty("");
-  }
+	// only admins can update role
+	if (req.user.role === Role.Admin) {
+		schemaRules.role = Joi.string().valid(Role.Admin, Role.User).empty('');
+	}
 
-  const schema = Joi.object(schemaRules); //.with('password', 'confirmPassword');
-  validateRequest(req, next, schema);
+	const schema = Joi.object(schemaRules); //.with('password', 'confirmPassword');
+	validateRequest(req, next, schema);
 }
 
 function updateUserAccSchema(req, res, next) {
-  const schemaRules = {
-    comment: Joi.string().empty(""),
-    amount: Joi.number().empty(),
-    paid: Joi.boolean().empty(),
-    billDate: Joi.date().empty(),
-  };
+	const schemaRules = {
+		comment: Joi.string().empty(''),
+		amount: Joi.number().empty(),
+		paid: Joi.boolean().empty(),
+		billDate: Joi.date().empty()
+	};
 
-  const schema = Joi.object(schemaRules);
-  validateRequest(req, next, schema);
+	const schema = Joi.object(schemaRules);
+	validateRequest(req, next, schema);
 }
 
 function updatePackageSchema(req, res, next) {
-  const schemaRules = {
-    displayName: Joi.string().empty(""),
-  };
+	const schemaRules = {
+		displayName: Joi.string().empty('')
+	};
 
-  // only admins can update role
-  if (req.user.role === Role.Admin) {
-    schemaRules.role = Joi.string().valid(Role.Admin, Role.User).empty("");
-  }
+	// only admins can update role
+	if (req.user.role === Role.Admin) {
+		schemaRules.role = Joi.string().valid(Role.Admin, Role.User).empty('');
+	}
 
-  const schema = Joi.object(schemaRules); //.with('password', 'confirmPassword');
-  validateRequest(req, next, schema);
+	const schema = Joi.object(schemaRules); //.with('password', 'confirmPassword');
+	validateRequest(req, next, schema);
+}
+
+function generateUserBillSchema(req, res, next) {
+	const schemaRules = {
+		date: Joi.date().empty()
+	};
+
+	// only admins can generate bills
+	if (req.user.role === Role.Admin) {
+		schemaRules.role = Joi.string().valid(Role.Admin, Role.User).empty('');
+	}
+
+	const schema = Joi.object(schemaRules);
+	validateRequest(req, next, schema);
 }
 
 function createUser(req, res, next) {
-  //console.log(req.body);
-  ispUsersService
-    .create(req.body)
-    .then(() => res.json({ message: "Successfully added user" }))
-    .catch(next);
+	//console.log(req.body);
+	ispUsersService.create(req.body).then(() => res.json({ message: 'Successfully added user' })).catch(next);
 }
 
 function createBatchUser(req, res, next) {
-  ispUsersService
-    .createBatchUsers(req.body)
-    .then(() =>
-      res.json({ message: "Successfully added users batch", code: 200 })
-    )
-    .catch(next);
+	ispUsersService
+		.createBatchUsers(req.body)
+		.then(() => res.json({ message: 'Successfully added users batch', code: 200 }))
+		.catch(next);
 }
 
 function createUserAccount(req, res, next) {
-  //console.log(`adding user account: ${req.body}`);
-  ispUsersService
-    .createUserAccount(req.body)
-    .then(() => res.json({ message: "Successfully added user" }))
-    .catch(next);
+	//console.log(`adding user account: ${req.body}`);
+	ispUsersService
+		.createUserAccount(req.body)
+		.then(() => res.json({ message: 'Successfully added user' }))
+		.catch(next);
 }
 
 function createPackage(req, res, next) {
-  //console.log(req.body);
-  ispUsersService
-    .createPackage(req.body)
-    .then(() => res.json({ message: "Successfully added package" }))
-    .catch(next);
+	//console.log(req.body);
+	ispUsersService.createPackage(req.body).then(() => res.json({ message: 'Successfully added package' })).catch(next);
 }
 
 function getAll(req, res, next) {
-  ispUsersService
-    .getAll()
-    .then((users) => res.json(users))
-    .catch(next);
+	ispUsersService.getAll().then((users) => res.json(users)).catch(next);
 }
 
 function getAllUserAccounts(req, res, next) {
-  ispUsersService
-    .getAllUserAccounts()
-    .then((userAccounts) => res.json(userAccounts))
-    .catch(next);
+	const qsObj = qs.parse(req.query);
+	console.log(qsObj);
+	ispUsersService.getAllUserAccounts(qsObj).then((userAccounts) => res.json(userAccounts)).catch(next);
 }
 
 function getAllPackages(req, res, next) {
-  ispUsersService
-    .getAllPackages()
-    .then((packages) => res.json(packages))
-    .catch(next);
+	ispUsersService.getAllPackages().then((packages) => res.json(packages)).catch(next);
 }
 
 function getById(req, res, next) {
-  // admins can get any account
-  if (req.user.role !== Role.Admin) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+	// admins can get any account
+	if (req.user.role !== Role.Admin) {
+		return res.status(401).json({ message: 'Unauthorized' });
+	}
 
-  ispUsersService
-    .getById(req.params.id)
-    .then((user) => (user ? res.json(user) : res.sendStatus(404)))
-    .catch(next);
+	ispUsersService.getById(req.params.id).then((user) => (user ? res.json(user) : res.sendStatus(404))).catch(next);
 }
 
 function getPackageById(req, res, next) {
-  // admins can get any account
-  if (req.user.role !== Role.Admin) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+	// admins can get any account
+	if (req.user.role !== Role.Admin) {
+		return res.status(401).json({ message: 'Unauthorized' });
+	}
 
-  ispUsersService
-    .getPackageById(req.params.id)
-    .then((pkg) => (pkg ? res.json(pkg) : res.sendStatus(404)))
-    .catch(next);
+	ispUsersService
+		.getPackageById(req.params.id)
+		.then((pkg) => (pkg ? res.json(pkg) : res.sendStatus(404)))
+		.catch(next);
 }
 
 function searchUserAccountByUser(req, res, next) {
-  // admins can get any account
-  if (req.user.role !== Role.Admin) {
-    return res.status(401).json({
-      message: "Unauthorized",
-    });
-  }
+	// admins can get any account
+	if (req.user.role !== Role.Admin) {
+		return res.status(401).json({
+			message: 'Unauthorized'
+		});
+	}
 
-  console.log(req.params.searchterm);
+	console.log(req.params.searchterm);
 
-  ispUsersService
-    .search(req.params.searchterm)
-    .then((users) => res.json(users))
-    .catch(next);
+	ispUsersService.search(req.params.searchterm).then((users) => res.json(users)).catch(next);
 }
 
 function update(req, res, next) {
-  // users can update their own account and admins can update any account
-  if (req.user.role !== Role.Admin) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-  console.log(req.body);
-  ispUsersService
-    .update(req.params.id, req.body)
-    .then((user) => res.json(user))
-    .catch(next);
+	// users can update their own account and admins can update any account
+	if (req.user.role !== Role.Admin) {
+		return res.status(401).json({ message: 'Unauthorized' });
+	}
+	console.log(req.body);
+	ispUsersService.update(req.params.id, req.body).then((user) => res.json(user)).catch(next);
 }
 
 function updatePackage(req, res, next) {
-  // users can update their own account and admins can update any account
-  if (req.user.role !== Role.Admin) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-  ispUsersService
-    .updatePackage(req.params.id, req.body)
-    .then((pkg) => res.json(pkg))
-    .catch(next);
+	// users can update their own account and admins can update any account
+	if (req.user.role !== Role.Admin) {
+		return res.status(401).json({ message: 'Unauthorized' });
+	}
+	ispUsersService.updatePackage(req.params.id, req.body).then((pkg) => res.json(pkg)).catch(next);
 }
 
 function updateUserAccount(req, res, next) {
-  // users can update their own account and admins can update any account
-  if (req.user.role !== Role.Admin) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-  //console.log(`req.body ${req.body.paid}`);
-  ispUsersService
-    .updateUserAccount(req.params.id, req.body)
-    .then((userAcc) => res.json(userAcc))
-    .catch(next);
+	// users can update their own account and admins can update any account
+	if (req.user.role !== Role.Admin) {
+		return res.status(401).json({ message: 'Unauthorized' });
+	}
+	//console.log(`req.body ${req.body.paid}`);
+	ispUsersService.updateUserAccount(req.params.id, req.body).then((userAcc) => res.json(userAcc)).catch(next);
 }
 
 function _delete(req, res, next) {
-  // users can delete their own account and admins can delete any account
-  if (req.user.role !== Role.Admin) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+	// users can delete their own account and admins can delete any account
+	if (req.user.role !== Role.Admin) {
+		return res.status(401).json({ message: 'Unauthorized' });
+	}
 
-  ispUsersService
-    .delete(req.params.id)
-    .then(() => res.json({ message: "User deleted successfully" }))
-    .catch(next);
+	ispUsersService.delete(req.params.id).then(() => res.json({ message: 'User deleted successfully' })).catch(next);
 }
 
 function deletePackage(req, res, next) {
-  // users can delete their own account and admins can delete any internet account
-  if (req.user.role !== Role.Admin) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+	// users can delete their own account and admins can delete any internet account
+	if (req.user.role !== Role.Admin) {
+		return res.status(401).json({ message: 'Unauthorized' });
+	}
 
-  ispUsersService
-    .deletePackage(req.params.id)
-    .then(() => res.json({ message: "Package deleted successfully" }))
-    .catch(next);
+	ispUsersService
+		.deletePackage(req.params.id)
+		.then(() => res.json({ message: 'Package deleted successfully' }))
+		.catch(next);
 }
 
 function deleteUserAcc(req, res, next) {
-  // Only Admin can delete User Accounts for Billing
-  if (req.user.role !== Role.Admin) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-  console.log("deleting user acc");
-  ispUsersService
-    .deleteUserAcc(req.params.id)
-    .then(() => res.json({ message: "User Acc deleted successfully" }))
-    .catch(next);
+	// Only Admin can delete User Accounts for Billing
+	if (req.user.role !== Role.Admin) {
+		return res.status(401).json({ message: 'Unauthorized' });
+	}
+	console.log('deleting user acc');
+	ispUsersService
+		.deleteUserAcc(req.params.id)
+		.then(() => res.json({ message: 'User Acc deleted successfully' }))
+		.catch(next);
+}
+
+function generateUserBill(req, res, next) {
+	ispUsersService
+		.generateUserBill(req.body)
+		.then((usersToAdd) => {
+			if (usersToAdd > 0) {
+				res.json({ message: 'Generated monthly bill successfully' });
+			} else {
+				res.json({ message: 'User acc bills already added, or no users' });
+			}
+		})
+		.catch(next);
 }

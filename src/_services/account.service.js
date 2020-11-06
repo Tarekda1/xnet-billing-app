@@ -1,11 +1,11 @@
 import { BehaviorSubject } from "rxjs";
-
-//import config from 'config';
 import { fetchWrapper, history } from "@/_helpers";
 import user from "../reducers/user";
+import { func } from "prop-types";
 const config = {
   apiUrl: "http://localhost:4000",
 };
+import { getToken, clearToken } from "@/_helpers";
 const userSubject = new BehaviorSubject(null);
 const baseUrl = `${config.apiUrl}/accounts`;
 
@@ -24,6 +24,7 @@ export const accountService = {
   update,
   delete: _delete,
   user: userSubject.asObservable(),
+  checkUser,
   get userValue() {
     return userSubject.value;
   },
@@ -40,10 +41,12 @@ function login(email, password) {
 
 function logout(callback) {
   // revoke token, stop refresh timer, publish null to user subscribers and redirect to login page
-  localStorage.removeItem("token");
+  //localStorage.removeItem("token");
   fetchWrapper.post(`${baseUrl}/revoke-token`, {}).then(
     () => {
       //stopRefreshTokenTimer();
+      clearToken();
+      callback && callback();
     },
     () => {
       callback && callback();
@@ -56,7 +59,7 @@ function refreshToken() {
     // publish user to subscribers and start timer to refresh token
     //userSubject.next(user);
     //startRefreshTokenTimer();
-    localStorage.setItem("user", JSON.stringify(user));
+    //localStorage.setItem("user", JSON.stringify(user));
     return user;
   });
 }
@@ -111,6 +114,10 @@ function update(id, params) {
     console.log(`user1: ${JSON.stringify(user)}`);
     return user;
   });
+}
+
+function checkUser() {
+  return fetchWrapper.post(`${baseUrl}/checkUser`);
 }
 
 // prefixed with underscore because 'delete' is a reserved word in javascript

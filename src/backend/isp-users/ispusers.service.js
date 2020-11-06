@@ -8,7 +8,9 @@ const Role = require('_helpers/role');
 const moment = require('moment');
 const mongoose = require('mongoose');
 const { async } = require('rxjs');
-
+//const
+const repository = require('_repository/ispusers-repository');
+const ispRepo = new repository(db);
 module.exports = {
 	getAll,
 	getById,
@@ -25,7 +27,8 @@ module.exports = {
 	updateUserAccount,
 	getUserAccById,
 	deleteUserAcc,
-	search
+	search,
+	generateUserBill
 };
 
 async function create(params) {
@@ -43,9 +46,6 @@ async function create(params) {
 }
 
 async function createBatchUsers(users) {
-	// users.forEach((user) => {
-	//   console.log(user.firstName);
-	// });
 	if (users.length === 0) {
 		return { message: 'empty list' };
 	}
@@ -75,6 +75,7 @@ async function createPackage(params) {
 
 async function createUserAccount(params) {
 	const billDate = new Date(params.billDate);
+	console.log(params.billDate);
 	console.log(params.user);
 	console.log(`today now: ${new Date().getFullYear()} Month: ${new Date().getUTCMonth()}`);
 
@@ -86,13 +87,15 @@ async function createUserAccount(params) {
 				paid: 2,
 				comment: 3,
 				amount: 4,
-				month: { $month: '$billDate' }
+				month: { $month: '$billDate' },
+				year: { $year: '$billDate' }
 			}
 		},
 		{
 			$match: {
 				user: mongoose.mongo.ObjectId(params.user),
-				month: billDate.getMonth() + 1
+				month: billDate.getMonth() + 1,
+				year: billDate.getFullYear()
 			}
 		}
 	]);
@@ -110,6 +113,52 @@ async function createUserAccount(params) {
 	await user.save();
 
 	return basicAccountDetails(user);
+}
+
+async function generateUserBill(params) {
+	const paramsbillDate = params.date;
+	//console.log(`month: ${paramsbillDate.getMonth()}`);
+	//get all users from users table that are not deleted
+	const users = await db.User.find({ isDeleted: false });
+	//console.log(JSON.stringify(users));
+	let usersAccsToInsert = [];
+	for (let user of users) {
+		console.log(user._id);
+		let userAcc = await db.UserAccount.aggregate([
+			{
+				$project: {
+					user: 1,
+					paid: 2,
+					comment: 3,
+					amount: 4,
+					month: { $month: '$billDate' },
+					year: { $year: '$billDate' }
+				}
+			},
+			{
+				$match: {
+					user: user._id,
+					month: paramsbillDate.getMonth() + 1,
+					year: paramsbillDate.getFullYear()
+				}
+			}
+		]);
+		//console.log(`userAcc: ${JSON.stringify(userAcc)}`);
+		if (userAcc.length === 0) {
+			const userToAdd = {
+				user: user._id
+			};
+			usersAccsToInsert.push(userToAdd);
+		}
+	}
+
+	console.log(`User Accs number to add: ${usersAccsToInsert.length}`);
+
+	//then insert many for this current month
+	if (usersAccsToInsert.length > 0) {
+		await db.UserAccount.insertMany(usersAccsToInsert);
+	}
+	return Promise.resolve(usersAccsToInsert.length);
 }
 
 function basicPackageDetails(package) {
@@ -160,11 +209,47 @@ async function getAll() {
 	return users.map((x) => basicDetails(x));
 }
 
-async function getAllUserAccounts() {
-	const users = await db.UserAccount.find().populate('user').populate('package');
-	return users.map((x) => {
-		return basicAccountDetails(x);
-	});
+async function getAllUserAccounts(params) {
+	const pagedResult = ispRepo.getISPUsers(params);
+	return pagedResult;
+
+	//let paramDate = new Date();
+	// let limitPerPage = params.limitPerPage || 50;
+	// const users = await db.UserAccount.aggregate([
+	//   {
+	//     $lookup: {
+	//       from: "users",
+	//       localField: "user",
+	//       foreignField: "_id",
+	//       as: "userdetails",
+	//     },
+	//   },
+	//   {
+	//     $project: {
+	//       user: 1,
+	//       paid: 2,
+	//       comment: 3,
+	//       amount: 4,
+	//       userdetails: 5,
+	//       _id: 6,
+	//       month: { $month: "$billDate" },
+	//       year: { $year: "$billDate" },
+	//     },
+	//   },
+	//   {
+	//     $match: {
+	//       month: paramDate.getMonth() + 1,
+	//       year: paramDate.getFullYear(),
+	//     },
+	//   },
+	//   {
+	//     $limit: limitPerPage,
+	//   },
+	// ]);
+	// return users.map((x) => {
+	//   console.log(x);
+	//   return basicAccountDetails(x, true);
+	// });
 }
 
 async function getUserAccById(id) {

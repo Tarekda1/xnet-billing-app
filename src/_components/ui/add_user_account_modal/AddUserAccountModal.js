@@ -24,10 +24,12 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
   const [submitting, setSubmitting] = useState(false);
   const [err, setErr] = useState("");
   const [formData, setFormData] = useState({
-    user: "",
+    firstName: "",
+    lastName: "",
     paid: false,
     comment: "",
     amount: 0,
+    userId: 0,
   });
 
   const fetchUsers = async () => {
@@ -43,7 +45,8 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
       console.log(`edit: ${edit}`);
       if (userAcc && edit) {
         setFormData({
-          user: userAcc.user,
+          firstName: userAcc.firstName,
+          lastName: userAcc.lastName,
           paid: userAcc.paid,
           comment: userAcc.comment,
           amount: Number(userAcc.amount),
@@ -103,9 +106,7 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
   return (
     <Modal open={open}>
       <Header>
-        {edit
-          ? `${userAcc.user.firstName} ${userAcc.user.lastName}`
-          : "Add User"}
+        {edit ? `${userAcc.firstName} ${userAcc.lastName}` : "Add User"}
       </Header>
       <Modal.Content>
         <Form>
@@ -117,7 +118,7 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
                     fluid
                     loading={loading}
                     label="User"
-                    defaultValue={edit ? userAcc.user.id : ""}
+                    defaultValue={edit ? userAcc.userId : ""}
                     options={usersData}
                     placeholder="Select User"
                     onChange={handlechange}

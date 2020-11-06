@@ -18,6 +18,7 @@ import { Loading } from '@/_components/';
 import { useDispatch, useSelector } from 'react-redux';
 import { globalActions } from '@/_actions/globalActions';
 import { ispService } from '@/_services/isp.service';
+import ReactPaginate from 'react-paginate';
 import { func } from 'prop-types';
 
 export const Billing = ({ match }) => {
@@ -57,7 +58,9 @@ export const Billing = ({ match }) => {
 
 	useEffect(
 		() => {
-			settempUserAccs(userAccounts);
+			if (userAccounts && typeof userAccounts.items == 'object') {
+				settempUserAccs(userAccounts.items);
+			}
 		},
 		[ userAccounts ]
 	);
@@ -87,18 +90,21 @@ export const Billing = ({ match }) => {
 		if (userAcc) dispatch(globalActions.updateUserAcc(id, userAccPost));
 	};
 
-	const onSearchSubmit = () => {
-		if (searchterm) {
-			setSearching(true);
-			const filteredAccs = userAccounts.filter((userAcc) => {
-				console.log(userAcc);
-				return (
-					userAcc.user.firstName.toLowerCase().includes(searchterm.toLowerCase()) ||
-					userAcc.user.lastName.toLowerCase().includes(searchterm.toLowerCase())
-				);
-			});
-			settempUserAccs(filteredAccs);
-			setTimeout(() => setSearching(false), 300);
+	const onSearchSubmit = (e) => {
+		//console.log(e.target.name);
+		if ((e && e.key === 'Enter') || (e && e.target.name === 'searchButton')) {
+			if (searchterm) {
+				setSearching(true);
+				const filteredAccs = userAccounts.filter((userAcc) => {
+					console.log(userAcc);
+					return (
+						userAcc.firstName.toLowerCase().includes(searchterm.toLowerCase()) ||
+						userAcc.lastName.toLowerCase().includes(searchterm.toLowerCase())
+					);
+				});
+				settempUserAccs(filteredAccs);
+				setTimeout(() => setSearching(false), 300);
+			}
 		}
 	};
 
@@ -108,6 +114,16 @@ export const Billing = ({ match }) => {
 			setSearching(false);
 			settempUserAccs(userAccounts);
 		}
+	};
+
+	const generateMonthlyBill = () => {
+		let date = new Date();
+		dispatch(globalActions.generateMonthlyBill({ date }));
+	};
+
+	const handlePageSubmit = (e) => {
+		console.log(e);
+		dispatch(globalActions.fetchInternetUserAccounts({ pageSizeParam: 2, pageParam: e.selected }));
 	};
 
 	const tableHeader = [ 'First Name', 'Last Name', 'Phone Number', 'Paid', 'Amount', 'Comment', 'Month Bill Date' ];
@@ -121,7 +137,7 @@ export const Billing = ({ match }) => {
 				<List floated="right" horizontal>
 					<List.Item>
 						<List.Content>
-							<Button icon className="basicStyle">
+							<Button onClick={generateMonthlyBill} icon className="basicStyle">
 								<Icon name="cog" /> Generate Monthly Bill
 							</Button>
 						</List.Content>
@@ -165,6 +181,7 @@ export const Billing = ({ match }) => {
 						iconPosition="left"
 						loading={searching}
 						placeholder="Search users..."
+						onKeyPress={onSearchSubmit}
 					/>
 					<Button
 						className="useraccounts__search primary-button"
@@ -183,7 +200,7 @@ export const Billing = ({ match }) => {
 									No User Accounts for Billing :(
 									<br />
 									<div>
-										<Button icon className="basicStyle">
+										<Button onClick={generateMonthlyBill} icon className="basicStyle">
 											<Icon name="cog" /> Generate Monthly Bill
 										</Button>
 									</div>
@@ -192,70 +209,90 @@ export const Billing = ({ match }) => {
 						</Message>
 					</Segment>
 				) : (
-					<Table>
-						<Table.Header>
-							<Table.Row>
-								{tableHeader.map((header, i) => <Table.HeaderCell key={i}>{header}</Table.HeaderCell>)}
-							</Table.Row>
-						</Table.Header>
-						<Table.Body>
-							{tempUserAccs.map(
-								(
-									{
-										user: { firstName, lastName, phoneNumber, address: userAddress },
-										comment,
-										paid,
-										amount,
-										billDate,
-										id
-									},
-									index
-								) => {
-									return (
-										<Table.Row className="useraccounts" key={index}>
-											<Table.Cell>{firstName}</Table.Cell>
-											<Table.Cell>{lastName}</Table.Cell>
-											<Table.Cell>{phoneNumber}</Table.Cell>
-											{/* <Table.Cell>{profile}</Table.Cell> */}
-											<Table.Cell>
-												<Checkbox
-													name="paid"
-													onChange={(e, event) => onPaidChecked(event, id)}
-													toggle
-													checked={paid}
-												/>
-											</Table.Cell>
-											<Table.Cell>{amount}</Table.Cell>
-											<Table.Cell>{comment}</Table.Cell>
-											<Table.Cell>{billDate}</Table.Cell>
-											<Table.Cell tyle={{ whiteSpace: 'nowrap' }}>
-												<div style={{ display: 'flex', flexDirection: 'row' }}>
-													<Button
-														icon
-														primary
-														onClick={() => onEditUserAccModal(id)}
-														className="btn btn-sm basicStyle mr-1"
-													>
-														<Icon name="edit" />
-													</Button>
-													<Button
-														onClick={(e) => deleteUserAcc(id, e)}
-														icon
-														className="useraccounts__button useraccounts__button-delete"
-														disabled={isDeleting}
-														loading={isDeleting && id === selectedId}
-													>
-														<Icon name="user delete" />
-													</Button>
-												</div>
-											</Table.Cell>
-										</Table.Row>
-									);
-								}
-							)}
-						</Table.Body>
-					</Table>
+					<div>
+						<Table>
+							<Table.Header>
+								<Table.Row>
+									{tableHeader.map((header, i) => (
+										<Table.HeaderCell key={i}>{header}</Table.HeaderCell>
+									))}
+								</Table.Row>
+							</Table.Header>
+							<Table.Body>
+								{tempUserAccs.map(
+									(
+										{
+											firstName,
+											lastName,
+											phoneNumber,
+											address,
+											comment,
+											paid,
+											amount,
+											billDate,
+											id
+										},
+										index
+									) => {
+										return (
+											<Table.Row className="useraccounts" key={index}>
+												<Table.Cell>{firstName}</Table.Cell>
+												<Table.Cell>{lastName}</Table.Cell>
+												<Table.Cell>{phoneNumber}</Table.Cell>
+												{/* <Table.Cell>{profile}</Table.Cell> */}
+												<Table.Cell>
+													<Checkbox
+														name="paid"
+														onChange={(e, event) => onPaidChecked(event, id)}
+														toggle
+														checked={paid}
+													/>
+												</Table.Cell>
+												<Table.Cell>{amount}</Table.Cell>
+												<Table.Cell>{comment}</Table.Cell>
+												<Table.Cell>{billDate}</Table.Cell>
+												<Table.Cell tyle={{ whiteSpace: 'nowrap' }}>
+													<div style={{ display: 'flex', flexDirection: 'row' }}>
+														<Button
+															icon
+															primary
+															onClick={() => onEditUserAccModal(id)}
+															className="btn btn-sm basicStyle mr-1"
+														>
+															<Icon name="edit" />
+														</Button>
+														<Button
+															onClick={(e) => deleteUserAcc(id, e)}
+															icon
+															className="useraccounts__button useraccounts__button-delete"
+															disabled={isDeleting && id === selectedId}
+															loading={isDeleting && id === selectedId}
+														>
+															<Icon name="user delete" />
+														</Button>
+													</div>
+												</Table.Cell>
+											</Table.Row>
+										);
+									}
+								)}
+							</Table.Body>
+						</Table>
+					</div>
 				)}
+				<ReactPaginate
+					previousLabel={'<'}
+					nextLabel={'>'}
+					breakLabel={'...'}
+					breakClassName={'break-me'}
+					pageCount={userAccounts.totalpagesCount}
+					marginPagesDisplayed={2}
+					pageRangeDisplayed={2}
+					onPageChange={handlePageSubmit}
+					containerClassName={'pagination'}
+					subContainerClassName={'pages pagination'}
+					activeClassName={'active'}
+				/>
 			</Segment>
 		</Container>
 	);

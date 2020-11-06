@@ -35,3 +35,43 @@
   align-self: center;
   align-items: center;
 }
+
+.pagination  {
+  display: flex;
+  padding-left: 15px;
+  padding-right: 15px;
+  flex:1;
+  justify-content: center;
+}
+
+.pagination li {
+  display: inline-block;
+  padding: 0 8px 0 8px;
+  margin: 5px;
+  color: black;
+}
+
+.pagination li:hover {
+  cursor: pointer;
+}
+
+.pagination li:active{
+  border:none;
+}
+
+.pagination li > a{
+  border:none;
+  font-weight: bold;
+  color: black;
+}
+
+.pagination li.active > a{
+  border:none;
+  font-weight: bold;
+  color: blue;
+}
+
+.pagination li.active {
+  border: 1px solid #c2c2c2;
+  border-radius: 4px;
+}

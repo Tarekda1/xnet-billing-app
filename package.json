@@ -25,6 +25,7 @@
     "react-dom": "^16.8.6",
     "react-i18next": "^11.4.0",
     "react-notifications-component": "^2.4.1",
+    "react-paginate": "^6.5.0",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.0.0",
     "read-excel-file": "^4.0.7",
