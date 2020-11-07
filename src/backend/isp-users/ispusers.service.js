@@ -210,7 +210,7 @@ async function getAll() {
 }
 
 async function getAllUserAccounts(params) {
-	const pagedResult = ispRepo.getISPUsers(params);
+	const pagedResult = ispRepo.getISPUsersAccounts(params);
 	return pagedResult;
 
 	//let paramDate = new Date();

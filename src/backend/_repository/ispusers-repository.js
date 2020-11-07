@@ -6,7 +6,7 @@ class ISPUsersRepository {
 		this.db = db;
 	}
 
-	async getISPUsers({ date, pageParam, pageSizeParam }) {
+	async getISPUsersAccounts({ date, pageParam, pageSizeParam }) {
 		let page = pageParam || 0;
 		let pageSize = pageSizeParam || 2;
 		//force get bill for current month

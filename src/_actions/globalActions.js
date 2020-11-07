@@ -44,11 +44,11 @@ const globalActions = {
 			payload: data
 		};
 	},
-	fetchInternetUsers: ({ itemsPagePage, page }) => {
+	fetchInternetUsers: (params) => {
 		return async (dispatch, getState) => {
 			try {
 				dispatch(globalActions.shouldLoad(true));
-				const data = await ispService.getAllUsers({ itemsPagePage, page });
+				const data = await ispService.getAllUsers(params);
 				console.log(data);
 				dispatch(globalActions.loadInternetUser(data));
 				dispatch(globalActions.shouldLoad(false));

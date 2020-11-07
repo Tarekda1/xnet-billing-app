@@ -24,7 +24,7 @@ export const ispService = {
 	generateMonthlyBill
 };
 
-function getAllUsers() {
+function getAllUsers(params) {
 	return fetchWrapper.get(`${baseUrl}/users`, params);
 }
 

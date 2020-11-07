@@ -251,7 +251,7 @@ export const Billing = ({ match }) => {
 												<Table.Cell>{amount}</Table.Cell>
 												<Table.Cell>{comment}</Table.Cell>
 												<Table.Cell>{billDate}</Table.Cell>
-												<Table.Cell tyle={{ whiteSpace: 'nowrap' }}>
+												<Table.Cell style={{ whiteSpace: 'nowrap' }}>
 													<div style={{ display: 'flex', flexDirection: 'row' }}>
 														<Button
 															icon
