@@ -25,28 +25,29 @@
 
 .useraccounts__search {
   margin-left: 5px !important;
+  margin-right: 0 !important;
 }
 
-.emptyUsersMessage{
+.emptyUsersMessage {
   display: flex;
-  flex:1;
+  flex: 1;
   justify-content: center;
   flex-direction: column;
   align-self: center;
   align-items: center;
 }
 
-.pagination  {
+.pagination {
   display: flex;
   padding-left: 15px;
   padding-right: 15px;
-  flex:1;
+  flex: 1;
   justify-content: center;
 }
 
 .pagination li {
   display: inline-block;
-  padding: 0 8px 0 8px;
+  padding: 3px;
   margin: 5px;
   color: black;
 }
@@ -55,18 +56,23 @@
   cursor: pointer;
 }
 
-.pagination li:active{
-  border:none;
+.pagination li:active {
+  border: none;
 }
 
-.pagination li > a{
-  border:none;
+.pagination li > a {
+  border: none;
   font-weight: bold;
   color: black;
+  padding: 5px;
 }
 
-.pagination li.active > a{
-  border:none;
+.pagination li > a:active {
+  border: none;
+}
+
+.pagination li.active > a {
+  border: none;
   font-weight: bold;
   color: blue;
 }

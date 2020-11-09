@@ -1,6 +1,6 @@
-import config from 'config';
-import { fetchWrapper, history } from '@/_helpers';
-import { func } from 'prop-types';
+import config from "config";
+import { fetchWrapper, history } from "@/_helpers";
+import { func } from "prop-types";
 // const config = {
 //  apiUrl: 'http://localhost:4000'
 // };
@@ -8,80 +8,91 @@ import { func } from 'prop-types';
 const baseUrl = `${config.apiUrl}/isp-users`;
 
 export const ispService = {
-	getAllUsers,
-	getUserById,
-	createUser,
-	updateUser,
-	createBatchUsers,
-	deleteUser,
-	getAllPackages,
-	createPackage,
-	createUserAccount,
-	getAllUserAccounts,
-	updateUserAcc,
-	searchUserAccount,
-	deleteUserAcc,
-	generateMonthlyBill
+  getAllUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  createBatchUsers,
+  deleteUser,
+  getAllPackages,
+  createPackage,
+  createUserAccount,
+  getAllUserAccounts,
+  updateUserAcc,
+  searchUserAccount,
+  deleteUserAcc,
+  generateMonthlyBill,
 };
 
 function getAllUsers(params) {
-	return fetchWrapper.get(`${baseUrl}/users`, params);
+  if (params) {
+    const qs = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+    return fetchWrapper.get(`${baseUrl}/users?${qs}`);
+  }
+  return fetchWrapper.get(`${baseUrl}/users`);
+  //return fetchWrapper.get(`${baseUrl}/users`, params);
 }
 
 function getAllUserAccounts(params) {
-	if (params) {
-		const qs = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
-		return fetchWrapper.get(`${baseUrl}/accounting?${qs}`, params);
-	}
-	return fetchWrapper.get(`${baseUrl}/accounting`);
+  if (params) {
+    const qs = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join("&");
+    return fetchWrapper.get(`${baseUrl}/accounting?${qs}`);
+  }
+  return fetchWrapper.get(`${baseUrl}/accounting`);
 }
 
 function getUserById(id) {
-	return fetchWrapper.get(`${baseUrl}/users/${id}`);
+  return fetchWrapper.get(`${baseUrl}/users/${id}`);
 }
 
 function createUser(params) {
-	return fetchWrapper.post(`${baseUrl}/users`, params);
+  return fetchWrapper.post(`${baseUrl}/users`, params);
 }
 
 function createBatchUsers(params) {
-	return fetchWrapper.post(`${baseUrl}/users/batchUsers`, params);
+  return fetchWrapper.post(`${baseUrl}/users/batchUsers`, params);
 }
 
 function createUserAccount(params) {
-	return fetchWrapper.post(`${baseUrl}/accounting/`, params);
+  return fetchWrapper.post(`${baseUrl}/accounting/`, params);
 }
 
 function createPackage(params) {
-	return fetchWrapper.post(`${baseUrl}/packages`, params);
+  return fetchWrapper.post(`${baseUrl}/packages`, params);
 }
 
 function updateUser(id, params) {
-	return fetchWrapper.put(`${baseUrl}/users/${id}`, params).then((user) => {
-		return user;
-	});
+  return fetchWrapper.put(`${baseUrl}/users/${id}`, params).then((user) => {
+    return user;
+  });
 }
 
 function updateUserAcc(id, params) {
-	console.log(params);
-	return fetchWrapper.put(`${baseUrl}/accounting/${id}`, params).then((userAcc) => {
-		return userAcc;
-	});
+  console.log(params);
+  return fetchWrapper
+    .put(`${baseUrl}/accounting/${id}`, params)
+    .then((userAcc) => {
+      return userAcc;
+    });
 }
 function deleteUserAcc(id) {
-	return fetchWrapper.delete(`${baseUrl}/accounting/${id}`).then((res) => {
-		return res;
-	});
+  return fetchWrapper.delete(`${baseUrl}/accounting/${id}`).then((res) => {
+    return res;
+  });
 }
 
 function deleteUser(id) {
-	return fetchWrapper.delete(`${baseUrl}/users/${id}`).then((res) => {
-		return res;
-	});
+  return fetchWrapper.delete(`${baseUrl}/users/${id}`).then((res) => {
+    return res;
+  });
 }
 
 function getAllPackages() {
-	return fetchWrapper.get(`${baseUrl}/packages`);
+  return fetchWrapper.get(`${baseUrl}/packages`);
 }
 
 /**
@@ -91,10 +102,10 @@ function getAllPackages() {
  * @returns list of generated user accounts
  */
 function generateMonthlyBill(params) {
-	console.log(params);
-	return fetchWrapper.post(`${baseUrl}/generateMonthlyBill`, params);
+  console.log(params);
+  return fetchWrapper.post(`${baseUrl}/generateMonthlyBill`, params);
 }
 
 function searchUserAccount(user) {
-	return fetchWrapper.get(`${baseUrl}/search/${user}`);
+  return fetchWrapper.get(`${baseUrl}/search/${user}`);
 }

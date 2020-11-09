@@ -33,8 +33,8 @@ const AddUserAccountModel = ({ open, onSubmit, onClose, edit, userAcc }) => {
   });
 
   const fetchUsers = async () => {
-    const users = await ispService.getAllUsers();
-    const usersData = users.map((usr) => ({
+    const users = await ispService.getAllUsers({});
+    const usersData = users.items.map((usr) => ({
       text: `${usr.firstName} ${usr.lastName}`,
       key: usr.id,
       value: usr.id,
