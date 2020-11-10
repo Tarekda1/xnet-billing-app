@@ -174,6 +174,19 @@ function basicAccountDetails(userAccount) {
   return { user, amount, comment, paid, billDate, id };
 }
 
+function basicAccountDetailsFromSearch(userAccount) {
+  console.log(userAccount);
+  const {
+    userdetails: [user],
+    amount,
+    comment,
+    paid,
+    billDate,
+    id,
+  } = userAccount;
+  return { user, amount, comment, paid, billDate, id };
+}
+
 function basicDetails(user) {
   console.log(JSON.stringify(user));
   const {
@@ -231,20 +244,35 @@ async function search(searchterm) {
   if (!searchterm) {
     throw "Invalid search term";
   }
-  const userAccs = db.UserAccount.aggregate([
+
+  const userAccs = await db.UserAccount.aggregate([
     //{ $unwind: '$user' },
     {
       $lookup: {
-        from: "user",
+        from: "users",
         localField: "user",
         foreignField: "_id",
-        as: "user",
+        as: "userdetails",
+      },
+    },
+    {
+      $project: {
+        userdetails: 5,
+        user: 1,
+        paid: 2,
+        comment: 3,
+        amount: 4,
+        _id: 6,
+        month: { $month: "$billDate" },
+        year: { $year: "$billDate" },
       },
     },
     {
       $match: {
-        "user.firstName": { $regex: /searchterm/ },
-        "user.lastName": { $regex: /searchterm/ },
+        $or: [
+          { "userdetails.firstName": { $regex: searchterm } },
+          { "userdetails.lastName": { $regex: searchterm } },
+        ],
       },
     },
   ]);
@@ -252,7 +280,7 @@ async function search(searchterm) {
   console.log(userAccs);
   if (!userAccs) throw "User account not found";
   return userAccs.map((x) => {
-    return basicAccountDetails(x);
+    return basicAccountDetailsFromSearch(x);
   });
 }
 

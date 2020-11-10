@@ -106,6 +106,6 @@ function generateMonthlyBill(params) {
   return fetchWrapper.post(`${baseUrl}/generateMonthlyBill`, params);
 }
 
-function searchUserAccount(user) {
-  return fetchWrapper.get(`${baseUrl}/search/${user}`);
+function searchUserAccount(userAcc) {
+  return fetchWrapper.get(`${baseUrl}/search/${userAcc}`);
 }

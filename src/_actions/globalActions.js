@@ -2,6 +2,7 @@ import types from "./types";
 import { ispService } from "@/_services";
 import userActions from "@/_actions/userActions";
 import { showNotification } from "@/_helpers";
+import Pagged from "@/_helpers/pagged-class";
 
 const globalActions = {
   changeLanguage: (data) => {
@@ -91,14 +92,20 @@ const globalActions = {
       dispatch(globalActions.fetchInternetUserAccounts());
     };
   },
-  searchForUser: (term) => {
+  searchForUserAcc: (term) => {
+    console.log(`searching: ${term}`);
     return async (dispatch, getState) => {
       console.log(term);
-      const data = getState().isp.userAccounts.filter((userAcc) => {
-        console.log(userAcc);
-        return userAcc.user.firstName.toLowerCase().indexOf(term) != -1;
-      });
-      console.log(`datareturned: ${data}`);
+      const data = await ispService.searchUserAccount(term);
+      // const data = getState().isp.userAccounts.items.filter((userAcc) => {
+      //   console.log(userAcc);
+      //   return (
+      //     userAcc.firstName.toLowerCase().indexOf(term) !== -1 ||
+      //     userAcc.lastName.toLowerCase().indexOf(term) !== -1
+      //   );
+      // });
+      // const mockPaggedData = new Pagged(data, 0, 1, data.length);
+      console.log(`datareturned: ${JSON.stringify(data)}`);
       return dispatch(globalActions.loadInternetUserAccounts(data));
     };
   },

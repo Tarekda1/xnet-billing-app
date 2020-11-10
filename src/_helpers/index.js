@@ -5,3 +5,4 @@ export * from "./role";
 export * from "./utility";
 export * from "./excel-helper";
 export * from "./data-parser";
+export * from "./pagged-class";

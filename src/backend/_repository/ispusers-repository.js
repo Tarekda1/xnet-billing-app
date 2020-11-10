@@ -57,12 +57,20 @@ class ISPUsersRepository {
 
   async getISPUsers({ pageParam, pageSizeParam }) {
     let page = pageParam || 0;
-    let pageSize = pageSizeParam || this.pageSizeGlobal;
-    console.log(`${page}:${pageSize}`);
     //get users from db
     const users = await this.db.User.find({ isDeleted: false }).populate(
       "package"
     );
+    let pageSize;
+    if (users && users.length > 0) {
+      pageSize = users.length;
+    } else {
+      pageSize =
+        pageSizeParam || (users && users.length) || this.pageSizeGlobal;
+    }
+
+    console.log(`${page}:${pageSize}`);
+
     //set up offset and total pages
     const offset = page * pageSize,
       paged = users.slice(offset, offset + pageSize),
@@ -79,7 +87,6 @@ class ISPUsersRepository {
     console.log(Math.ceil(users.length / pageSize));
     const pageResult = new pagged(normalized, page, totalPages, users.length);
     return pageResult;
-    //return users.map((x) => basicDetails(x));
   }
 
   normalizeBasicDetails(user) {

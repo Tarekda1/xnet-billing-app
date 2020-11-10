@@ -31,11 +31,7 @@ router.get("/packages/:id", authorize(), getPackageById);
 router.put("/packages/:id", authorize(), updatePackageSchema, updatePackage);
 router.delete("/packages/:id", authorize(), deletePackage);
 router.get("/accounting", authorize(Role.Admin), getAllUserAccounts);
-router.get(
-  "/search/:searchterm",
-  authorize(Role.Admin),
-  searchUserAccountByUser
-);
+router.get("/search/:searchterm", authorize(), searchUserAccountByUser);
 router.post(
   "/accounting/",
   authorize(Role.Admin),
@@ -252,15 +248,7 @@ function getPackageById(req, res, next) {
 }
 
 function searchUserAccountByUser(req, res, next) {
-  // admins can get any account
-  if (req.user.role !== Role.Admin) {
-    return res.status(401).json({
-      message: "Unauthorized",
-    });
-  }
-
   console.log(req.params.searchterm);
-
   ispUsersService
     .search(req.params.searchterm)
     .then((users) => res.json(users))

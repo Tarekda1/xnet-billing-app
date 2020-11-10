@@ -80,8 +80,8 @@ export const Billing = ({ match }) => {
 
   const onPaidChecked = (e, id) => {
     console.log("updating use account");
-    console.log(e.checked);
-    console.log(id);
+    // console.log(e.checked);
+    // console.log(id);
     const userAcc = userAccounts.items.filter((ua) => ua.id === id)[0];
     console.log(userAcc);
     const userAccPost = {
@@ -98,16 +98,17 @@ export const Billing = ({ match }) => {
     if ((e && e.key === "Enter") || (e && e.target.name === "searchButton")) {
       if (searchterm) {
         setSearching(true);
-        const filteredAccs = userAccounts.items.filter((userAcc) => {
-          console.log(userAcc);
-          return (
-            userAcc.firstName
-              .toLowerCase()
-              .includes(searchterm.toLowerCase()) ||
-            userAcc.lastName.toLowerCase().includes(searchterm.toLowerCase())
-          );
-        });
-        settempUserAccs(filteredAccs);
+        // const filteredAccs = userAccounts.items.filter((userAcc) => {
+        //   console.log(userAcc);
+        //   return (
+        //     userAcc.firstName
+        //       .toLowerCase()
+        //       .includes(searchterm.toLowerCase()) ||
+        //     userAcc.lastName.toLowerCase().includes(searchterm.toLowerCase())
+        //   );
+        // });
+        dispatch(globalActions.searchForUserAcc(searchterm.toLowerCase()));
+        //settempUserAccs(filteredAccs);
         setTimeout(() => setSearching(false), 300);
       }
     }
