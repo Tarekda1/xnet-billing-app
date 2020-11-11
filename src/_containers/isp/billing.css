@@ -17,7 +17,7 @@
   width: 100%;
   box-shadow: none !important ;
 }
-
+/* user accounts table */
 .useraccounts__button-delete {
   background-color: red !important;
   color: white !important;
@@ -26,6 +26,10 @@
 .useraccounts__search {
   margin-left: 5px !important;
   margin-right: 0 !important;
+}
+
+.useraccounts td {
+  padding: 5px !important;
 }
 
 .emptyUsersMessage {
