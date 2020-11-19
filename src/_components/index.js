@@ -8,3 +8,4 @@ export * from "./ui/upload_file/UploadFile";
 export * from "./ui/uploaded_users/UploadedUsers";
 export * from "./ui/notification_wrapper/notificationWrapper";
 export * from "./checkUser/CheckUser";
+export * from "./ui/search_bar/SearchBar";

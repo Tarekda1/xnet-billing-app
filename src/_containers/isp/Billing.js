@@ -20,23 +20,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "@/_actions/globalActions";
 import ReactPaginate from "react-paginate";
 import CurrencyFormat from "react-currency-format";
+import { SearchBar } from "@/_components";
 
 export const Billing = ({ match }) => {
   const dispatch = useDispatch();
   const defaultItemsPerPage = 25;
   const [itemsPerPage, setitemsPerPage] = useState(defaultItemsPerPage);
-  const { path } = match;
   const [openAddModal, setOpenAddModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [hideAddUsers, sethideAddUsers] = useState(true);
   const userAccounts = useSelector((state) => state.isp.userAccounts);
   const showLoading = useSelector((state) => state.global.showLoading);
-  const showSearching = useSelector((state) => state.global.showSearching);
-  const [tempUserAccs, settempUserAccs] = useState([]);
   const [selectUserAcc, setSelectedUserAcc] = useState({});
   const [isEdit, setIsEdit] = useState(false);
-  const [searchterm, setSearchterm] = useState("");
-  const [searching, setSearching] = useState(false);
   const [selectedId, setSelectedId] = useState(-1);
   const onAddUserAccModalClose = () => {
     setOpenAddModal(false);
@@ -70,7 +66,7 @@ export const Billing = ({ match }) => {
 
   useEffect(() => {
     if (userAccounts && typeof userAccounts.items == "object") {
-      settempUserAccs(userAccounts.items);
+      //settempUserAccs(userAccounts.items);
       sethideAddUsers(false);
     }
   }, [userAccounts]);
@@ -98,48 +94,6 @@ export const Billing = ({ match }) => {
       amount: userAcc.amount,
     };
     if (userAcc) dispatch(globalActions.updateUserAcc(id, userAccPost));
-  };
-
-  const onSearchSubmit = (e) => {
-    //console.log(e.target.name);
-    if ((e && e.key === "Enter") || (e && e.target.name === "searchButton")) {
-      if (searchterm) {
-        //setSearching(true);
-        // const filteredAccs = userAccounts.items.filter((userAcc) => {
-        //   console.log(userAcc);
-        //   return (
-        //     userAcc.firstName
-        //       .toLowerCase()
-        //       .includes(searchterm.toLowerCase()) ||
-        //     userAcc.lastName.toLowerCase().includes(searchterm.toLowerCase())
-        //   );
-        // });
-        dispatch(globalActions.searchForUserAcc(searchterm.toLowerCase()));
-        //settempUserAccs(filteredAccs);
-        //setSearching(false);
-      }
-      //  else {
-      // 	console.log('refetch accounts');
-      // 	dispatch(
-      // 		globalActions.fetchInternetUserAccounts({
-      // 			pageSizeParam: itemsPerPage
-      // 		})
-      // 	);
-      // }
-    }
-  };
-
-  const handleSearchInputChange = (e) => {
-    setSearchterm(e.target.value);
-    if (e.target.value.trim() === "") {
-      setSearching(false);
-      dispatch(
-        globalActions.fetchInternetUserAccounts({
-          pageSizeParam: itemsPerPage,
-        })
-      );
-      //settempUserAccs(userAccounts.items);
-    }
   };
 
   const generateMonthlyBill = () => {
@@ -212,29 +166,8 @@ export const Billing = ({ match }) => {
         </List>
       </Segment>
       <Segment className="Segment__noBorder noMargin paddingTopZero">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            paddingBottom: "10px",
-          }}
-        >
-          <Input
-            name="search"
-            icon="users"
-            onChange={handleSearchInputChange}
-            iconPosition="left"
-            loading={showSearching}
-            placeholder="Search users..."
-            onKeyPress={onSearchSubmit}
-          />
-          <Button
-            className="useraccounts__search primary-button"
-            icon="search"
-            name="searchButton"
-            onClick={onSearchSubmit}
-          />
-        </div>
+        {/*search bar */}
+        <SearchBar searchKey="userAcc" searchKeyFetch="userAccFetch" />
         <div>
           {showLoading && <Loading />}
           {userAccounts && userAccounts.items && userAccounts.items.length > 0 && (
@@ -247,7 +180,7 @@ export const Billing = ({ match }) => {
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {tempUserAccs.map(
+                {userAccounts.items.map(
                   (
                     {
                       firstName,
@@ -341,8 +274,8 @@ export const Billing = ({ match }) => {
 
         {!showLoading &&
         !hideAddUsers &&
-        tempUserAccs &&
-        tempUserAccs.length === 0 ? (
+        userAccounts &&
+        userAccounts.items.length === 0 ? (
           <Segment>
             <Message>
               <Message.Header>

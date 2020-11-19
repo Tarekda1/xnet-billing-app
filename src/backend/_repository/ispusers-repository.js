@@ -4,7 +4,7 @@ const pagged = require("../_common/pagged");
 class ISPUsersRepository {
   constructor(db) {
     this.db = db;
-    this.pageSizeGlobal = 3;
+    this.pageSizeGlobal = 50;
   }
 
   async getISPUsersAccounts({ date, pageParam, pageSizeParam }) {
@@ -46,12 +46,19 @@ class ISPUsersRepository {
         Math.floor(users.length / pageSize) == 0
           ? 1
           : Math.floor(users.length / pageSize);
-
+    console.log(paged);
     let normalized = paged.map((x) => {
       // console.log(x);
       return this.normalizeAccountDetails(x, true);
     });
-    const pageResult = new pagged(normalized, page, totalPages, users.length);
+    const count = await this.db.User.count();
+    const pageResult = new pagged(
+      normalized,
+      page,
+      totalPages,
+      users.length,
+      count
+    );
     return pageResult;
   }
 
@@ -85,7 +92,14 @@ class ISPUsersRepository {
     console.log(users.length);
     console.log(pageSize);
     console.log(Math.ceil(users.length / pageSize));
-    const pageResult = new pagged(normalized, page, totalPages, users.length);
+    const count = await this.db.User.count();
+    const pageResult = new pagged(
+      normalized,
+      page,
+      totalPages,
+      users.length,
+      count
+    );
     return pageResult;
   }
 
@@ -127,11 +141,13 @@ class ISPUsersRepository {
     const normalized = userAccs.map((x) => {
       return this.normalizeAccountDetails(x, true);
     });
+    const count = await this.db.UserAccount.count();
     const pageResult = new pagged(
       normalized,
       0,
       userAccs.length,
-      normalized.length
+      normalized.length,
+      count
     );
     return pageResult;
   }
