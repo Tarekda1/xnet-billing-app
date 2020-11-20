@@ -12,3 +12,8 @@ export const HeaderListTemplate = [
   "Address",
   "Phone Number",
 ];
+
+export const searchKey = {
+  user: { search: "user", fetch: "userFetch" },
+  userAcc: { search: "userAcc", fetch: "userAccFetch" },
+};

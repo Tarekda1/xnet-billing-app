@@ -2,35 +2,30 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "@/_actions/globalActions";
 import { Button, Input } from "semantic-ui-react";
+import { searchKey } from "@/_containers/isp/Constants";
 
-const SearchBar = ({ searchKeyFetch, searchKey }) => {
+const SearchBar = ({ searchKeyFetch, searchKeyProp }) => {
   const [searchterm, setSearchterm] = useState("");
   const [searchMap, setSearchMap] = useState(new Map());
   //const searchMap = new Map();
   useEffect(() => {
     console.log("run");
-    searchMap.set(
-      "userAccFetch",
+    searchMap.set(searchKey.userAcc.fetch, () =>
       globalActions.fetchInternetUserAccounts({
         pageSizeParam: 50,
       })
     );
     //console.log(searchMap.size);
-    searchMap.set(
-      "usersFetch",
+    searchMap.set(searchKey.user.fetch, () =>
       globalActions.fetchInternetUsers({
         pageSizeParam: 50,
       })
     );
-    searchMap.set(
-      "users",
-      globalActions.fetchInternetUsers({
-        pageSizeParam: 50,
-      })
+    searchMap.set(searchKey.user.search, (search) =>
+      globalActions.searchForUsers(search)
     );
-    searchMap.set(
-      "userAcc",
-      globalActions.searchForUserAcc(searchterm.toLowerCase())
+    searchMap.set(searchKey.userAcc.search, (search) =>
+      globalActions.searchForUserAcc(search)
     );
   }, []);
   const dispatch = useDispatch();
@@ -39,23 +34,18 @@ const SearchBar = ({ searchKeyFetch, searchKey }) => {
     setSearchterm(e.target.value);
     if (e.target.value.trim() === "") {
       //setSearching(false);
-      dispatch(searchMap.get(searchKeyFetch));
+      dispatch(searchMap.get(searchKeyFetch)());
     }
   };
 
   const onSearchSubmit = (e) => {
-    //console.log(e.target.name);
-    if ((e && e.key === "Enter") || (e && e.target.name === "searchButton")) {
-      // console.log(searchMap.size);
-      // console.log(searchMap.get("userAccFetch"));
-      if (searchterm) {
-        // for (let item of searchMap.keys()) {
-        //   console.log(item);
-        // }
-        //console.log(searchMap.get(searchKey));
-        //dispatch(searchMap.get(searchKey));
-        dispatch(searchMap.get(searchKey));
-      }
+    //trigger search on enter key or button press
+    if (
+      (e && e.key === "Enter") ||
+      (e && e.target.name === "searchButton" && searchterm && searchKeyProp)
+    ) {
+      console.log(searchKeyProp);
+      dispatch(searchMap.get(searchKeyProp)(searchterm.toLowerCase()));
     }
   };
 

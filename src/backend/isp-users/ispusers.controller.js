@@ -32,6 +32,7 @@ router.put("/packages/:id", authorize(), updatePackageSchema, updatePackage);
 router.delete("/packages/:id", authorize(), deletePackage);
 router.get("/accounting", authorize(Role.Admin), getAllUserAccounts);
 router.get("/search/:searchterm", authorize(), searchUserAccountByUser);
+router.get("/search/user/:searchterm", authorize(), searchUser);
 router.post(
   "/accounting/",
   authorize(Role.Admin),
@@ -251,6 +252,14 @@ function searchUserAccountByUser(req, res, next) {
   console.log(req.params.searchterm);
   ispUsersService
     .search(req.params.searchterm)
+    .then((users) => res.json(users))
+    .catch(next);
+}
+
+function searchUser(req, res, next) {
+  console.log(req.params.searchterm);
+  ispUsersService
+    .searchUser(req.params.searchterm)
     .then((users) => res.json(users))
     .catch(next);
 }

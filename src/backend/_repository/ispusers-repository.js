@@ -105,7 +105,6 @@ class ISPUsersRepository {
 
   async searchRemote(searchTerm) {
     const userAccs = await this.db.UserAccount.aggregate([
-      //{ $unwind: '$user' },
       {
         $lookup: {
           from: "users",
@@ -152,37 +151,74 @@ class ISPUsersRepository {
     return pageResult;
   }
 
-  normalizeBasicDetails(user) {
-    // console.log(JSON.stringify(user));
-    return user;
-    // const {
-    //   id,
-    //   firstName,
-    //   lastName,
-    //   email,
-    //   phoneNumber,
-    //   address,
-    //   isUserActive,
-    //   created,
-    //   updated,
-    //   package,
-    //   userName,
-    //   password,
-    // } = user;
-    // return {
-    //   id,
-    //   firstName,
-    //   lastName,
-    //   email,
-    //   phoneNumber,
-    //   address,
-    //   isUserActive,
-    //   created,
-    //   updated,
-    //   package,
-    //   userName,
-    //   password,
-    // };
+  async searchUserRemote(searchTerm) {
+    const users = await this.db.User.aggregate([
+      {
+        $lookup: {
+          from: "packages",
+          localField: "package",
+          foreignField: "_id",
+          as: "package",
+        },
+      },
+      {
+        $match: {
+          $or: [
+            {
+              firstName: new RegExp(`.*${searchTerm}.*`, "i"),
+            },
+            { lastName: new RegExp(`.*${searchTerm}.*`, "i") },
+          ],
+          isDeleted: false,
+        },
+      },
+    ]);
+    if (!users) throw "User account not found";
+    const normalized = users.map((x) => {
+      return this.normalizeBasicDetails(x, true);
+    });
+    const count = await this.db.User.count();
+    const pageResult = new pagged(
+      normalized,
+      0,
+      users.length,
+      normalized.length,
+      count
+    );
+    return pageResult;
+  }
+
+  normalizeBasicDetails(user, fromSearch) {
+    console.log(JSON.stringify(user));
+    //return user;
+    const {
+      _id,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      address,
+      isUserActive,
+      created,
+      updated,
+      userName,
+      password,
+      package: Profile,
+    } = user;
+    return {
+      id: _id,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      address,
+      isUserActive,
+      created,
+      updated,
+      userName,
+      password,
+      Profile,
+    };
   }
 
   normalizeAccountDetails(userAccount, fromAggregate) {

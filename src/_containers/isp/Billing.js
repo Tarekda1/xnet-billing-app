@@ -167,7 +167,7 @@ export const Billing = ({ match }) => {
       </Segment>
       <Segment className="Segment__noBorder noMargin paddingTopZero">
         {/*search bar */}
-        <SearchBar searchKey="userAcc" searchKeyFetch="userAccFetch" />
+        <SearchBar searchKeyProp="userAcc" searchKeyFetch="userAccFetch" />
         <div>
           {showLoading && <Loading />}
           {userAccounts && userAccounts.items && userAccounts.items.length > 0 && (

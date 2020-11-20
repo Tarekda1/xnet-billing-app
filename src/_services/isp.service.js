@@ -22,6 +22,7 @@ export const ispService = {
   searchUserAccount,
   deleteUserAcc,
   generateMonthlyBill,
+  searchUsersXX,
 };
 
 function getAllUsers(params) {
@@ -108,4 +109,12 @@ function generateMonthlyBill(params) {
 
 function searchUserAccount(userAcc) {
   return fetchWrapper.get(`${baseUrl}/search/${userAcc}`);
+}
+
+/**
+ * search for a user sent as a parameter ( firstname or lastname)
+ * @param {*} user
+ */
+function searchUsersXX(user) {
+  return fetchWrapper.get(`${baseUrl}/search/user/${user}`);
 }

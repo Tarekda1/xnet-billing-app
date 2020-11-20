@@ -21,6 +21,7 @@ import AddPackageModal from "@/_components/ui/add_package_modal/AddPackageModal"
 import { Loading } from "@/_components/";
 import { Options } from "@/_containers/isp/Constants";
 import ReactPaginate from "react-paginate";
+import { SearchBar } from "@/_components";
 import _ from "lodash";
 
 const Users = ({ history }) => {
@@ -200,6 +201,7 @@ const Users = ({ history }) => {
       </Grid>
       {showLoading && <Loading />}
       <div className="userswrapper">
+        <SearchBar searchKeyProp="user" searchKeyFetch="userFetch" />
         {users && users.items && users.items.length > 0 && (
           <Table className="celled striped users">
             <Table.Header>
@@ -222,7 +224,11 @@ const Users = ({ history }) => {
                     <Table.Cell>{user.lastName}</Table.Cell>
                     <Table.Cell>{user.phoneNumber}</Table.Cell>
                     <Table.Cell>
-                      {user.package ? user.package.displayName : "N/A"}
+                      {user.Profile && Array.isArray(user.Profile)
+                        ? user.Profile[0].displayName
+                        : typeof user.Profile === "object"
+                        ? user.Profile.displayName
+                        : "N/A"}
                     </Table.Cell>
                     <Table.Cell>{user.address}</Table.Cell>
                     <Table.Cell>{user.created}</Table.Cell>
