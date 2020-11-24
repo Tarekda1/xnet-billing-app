@@ -199,7 +199,7 @@ async function create(params) {
   return basicDetails(account);
 }
 
-async function update(id, params) {
+async function update(id, { url, file }, params) {
   const account = await getAccount(id);
 
   // validate
@@ -215,8 +215,13 @@ async function update(id, params) {
     params.passwordHash = hash(params.password);
   }
 
+  console.log(JSON.stringify(file));
+
   // copy params to account and save
   Object.assign(account, params);
+  if (file) {
+    account.profileImg = `${url}/public/uploads/${file.filename}`;
+  }
   account.updated = Date.now();
   await account.save();
 
@@ -281,6 +286,7 @@ function basicDetails(account) {
     created,
     updated,
     isVerified,
+    profileImg,
   } = account;
   return {
     id,
@@ -292,6 +298,7 @@ function basicDetails(account) {
     created,
     updated,
     isVerified,
+    profileImg,
   };
 }
 

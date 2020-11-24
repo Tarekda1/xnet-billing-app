@@ -1,6 +1,7 @@
 ﻿require("rootpath")();
 const express = require("express");
 const app = express();
+const path = require("path");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -17,6 +18,9 @@ app.use(
     credentials: true,
   })
 );
+app.use("/public/uploads", express.static("uploads"));
+app.use("/public", express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // api routes
 app.use("/accounts", require("./accounts/accounts.controller"));

@@ -31,7 +31,12 @@ function Update({ history }) {
     email: user.email,
     password: "",
     confirmPassword: "",
+    profileImg: user.profileImg || "",
   };
+
+  // const onImageUpload=(fileName)=>{
+  //   initialValues
+  // }
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
@@ -49,8 +54,16 @@ function Update({ history }) {
   function onSubmit(fields, { setStatus, setSubmitting }) {
     setStatus();
     console.log(user);
+    console.log(fields);
+    const formData = new FormData();
+    Object.keys(fields).forEach((k) => {
+      console.log(k);
+      if (fields[k]) formData.append(k, fields[k]);
+      console.log(fields[k]);
+    });
+    console.log(formData);
     accountService
-      .update(user.id, fields)
+      .update(user.id, formData)
       .then((user) => {
         console.log(`user from response ${user}`);
         dispatch(userActions.updateProfile(user));
@@ -88,12 +101,23 @@ function Update({ history }) {
           validationSchema={validationSchema}
           onSubmit={onSubmit}
         >
-          {({ errors, touched, isSubmitting }) => (
+          {({ errors, touched, isSubmitting, setFieldValue }) => (
             <Form>
               <Grid>
                 <Grid.Row>
                   <Grid.Column width={4}>
-                    <Avatar className="profile__avatar" />
+                    <Avatar className="profile__avatar" imagePath={""} />
+                    <input
+                      type="file"
+                      name="profileImg"
+                      onChange={(event) => {
+                        console.log(event.currentTarget.files);
+                        setFieldValue(
+                          "profileImg",
+                          event.currentTarget.files[0]
+                        );
+                      }}
+                    />
                   </Grid.Column>
                   <Grid.Column width={6}>
                     <Table className="updateProfile">

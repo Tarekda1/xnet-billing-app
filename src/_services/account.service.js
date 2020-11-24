@@ -109,7 +109,8 @@ function create(params) {
 
 function update(id, params) {
   console.log(id);
-  return fetchWrapper.put(`${baseUrl}/${id}`, params).then((user) => {
+  console.log(params);
+  return fetchWrapper.putForm(`${baseUrl}/${id}`, params).then((user) => {
     // update stored user if the logged in user updated their own record
     console.log(`user1: ${JSON.stringify(user)}`);
     return user;

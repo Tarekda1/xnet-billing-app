@@ -31,7 +31,7 @@ const Users = ({ history }) => {
   const showLoading = useSelector((state) => state.global.showLoading);
   const [showUserModel, setShowUserModel] = useState(false);
   const [showPackageModel, setShowPackageModel] = useState(false);
-  const [loading, setLoading] = useState(false);
+  //const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [selected, setSelected] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -261,7 +261,12 @@ const Users = ({ history }) => {
         <Segment>
           <Message className="emptyusermsg">
             <Message.Content>
-              <h4 style={{ margin: 0, padding: 0 }}>You have no Users!</h4>{" "}
+              {/* if items is 0 and original item count >0 then result from search */}
+              <h4 style={{ margin: 0, padding: 0 }}>
+                {users.originalItemCount > 0
+                  ? "No users found!, try searching another term :)"
+                  : "You have no users!"}
+              </h4>{" "}
               <Button
                 onClick={() => setShowUserModel(true)}
                 style={{ marginTop: "10px" }}

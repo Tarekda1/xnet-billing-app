@@ -5,6 +5,7 @@ const validateRequest = require("_middleware/validate-request");
 const authorize = require("_middleware/authorize");
 const Role = require("_helpers/role");
 const accountService = require("./account.service");
+const uploadFile = require("_middleware/upload");
 
 // routes
 router.post("/authenticate", authenticateSchema, authenticate);
@@ -23,7 +24,13 @@ router.post("/reset-password", resetPasswordSchema, resetPassword);
 router.get("/", authorize(Role.Admin), getAll);
 router.get("/:id", authorize(), getById);
 router.post("/", authorize(Role.Admin), createSchema, create);
-router.put("/:id", authorize(), updateSchema, update);
+router.put(
+  "/:id",
+  authorize(),
+  updateSchema,
+  uploadFile.single("profileImg"),
+  update
+);
 router.delete("/:id", authorize(), _delete);
 
 module.exports = router;
@@ -245,9 +252,11 @@ function update(req, res, next) {
   if (req.params.id !== req.user.id && req.user.role !== Role.Admin) {
     return res.status(401).json({ message: "Unauthorized" });
   }
+  const url = req.protocol + "://" + req.get("host");
+  console.log(`file: ${req.file}`);
 
   accountService
-    .update(req.params.id, req.body)
+    .update(req.params.id, { file: req.file, url }, req.body)
     .then((account) => res.json(account))
     .catch(next);
 }
