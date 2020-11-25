@@ -5,13 +5,15 @@ import "./uploadfile.less";
 const UploadFile = ({
   button = {},
   input,
-  size,
+  size = "small",
   showbutton = true,
   showicon = true,
   labelText = "Select File",
   showLabel = true,
   inputRef,
-  visible,
+  iconName = "file excel",
+  visible = true,
+  onFileUpload,
 }) => {
   let hiddenInput;
   return (
@@ -20,14 +22,17 @@ const UploadFile = ({
         <Button
           icon
           htmlFor={input.id}
-          onClick={() => hiddenInput.click()}
+          onClick={(e) => {
+            e.preventDefault();
+            hiddenInput.click();
+          }}
           {...button}
         >
           {showicon && (
             <Icon
               className="uploadcontainer__actionicon"
-              size="huge"
-              name="file excel"
+              size={size}
+              name={iconName}
             />
           )}
           <label hidden={!showLabel} style={{ marginTop: "15px" }}>
@@ -41,6 +46,13 @@ const UploadFile = ({
             inputRef.current = el;
           }}
           type="file"
+          onChange={(event) => {
+            if (onFileUpload) {
+              const imagePath = URL.createObjectURL(event.target.files[0]);
+              console.log(imagePath);
+              onFileUpload(event.target.files[0], imagePath);
+            }
+          }}
           {...input}
         />
       </div>

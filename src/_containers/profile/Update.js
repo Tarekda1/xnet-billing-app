@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -17,10 +17,12 @@ import {
 import { Loading, Avatar } from "@/_components";
 import "./profile.css";
 import userActions from "@/_actions/userActions";
+import { UploadFile } from "@/_components";
 import "./update.less";
 
 function Update({ history }) {
   //const user = accountService.userValue;
+  const inputFileRef = useRef("");
   const user = useSelector((state) => state.user.userInfo);
   const dispatch = useDispatch();
   const [opendelete, setOpenDelete] = useState(false);
@@ -31,12 +33,9 @@ function Update({ history }) {
     email: user.email,
     password: "",
     confirmPassword: "",
-    profileImg: user.profileImg || "",
   };
 
-  // const onImageUpload=(fileName)=>{
-  //   initialValues
-  // }
+  const [profileImg, setprofileImg] = useState(user.profileImg);
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
@@ -106,18 +105,41 @@ function Update({ history }) {
               <Grid>
                 <Grid.Row>
                   <Grid.Column width={4}>
-                    <Avatar className="profile__avatar" imagePath={""} />
-                    <input
-                      type="file"
-                      name="profileImg"
-                      onChange={(event) => {
-                        console.log(event.currentTarget.files);
-                        setFieldValue(
-                          "profileImg",
-                          event.currentTarget.files[0]
-                        );
-                      }}
+                    <Avatar
+                      className="profile__avatar"
+                      imagePath={profileImg}
                     />
+                    <div>
+                      <UploadFile
+                        inputRef={inputFileRef}
+                        input={{ id: "profileImg" }}
+                        labelText="Upload Image"
+                        iconName="upload"
+                        onFileUpload={(file, imagePath) => {
+                          //initialValues.profileImg = ;
+                          setprofileImg(imagePath);
+                          setFieldValue("profileImg", file);
+                        }}
+                      />
+                      {/* <input
+                        type="file"
+                        name="profileImg"
+                        onChange={(event) => {
+                          console.log(event.currentTarget.files);
+                          setFieldValue(
+                            "profileImg",
+                            event.currentTarget.files[0]
+                          );
+                        }}
+                      />
+                      <label
+                        for="embedpollfileinput"
+                        class="ui huge green right floated button"
+                      >
+                        <i class="ui upload icon"></i>
+                        Upload image
+                      </label> */}
+                    </div>
                   </Grid.Column>
                   <Grid.Column width={6}>
                     <Table className="updateProfile">

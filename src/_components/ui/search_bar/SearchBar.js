@@ -32,6 +32,7 @@ const SearchBar = ({ searchKeyFetch, searchKeyProp }) => {
   const showSearching = useSelector((state) => state.global.showSearching);
   const handleSearchInputChange = (e) => {
     setSearchterm(e.target.value);
+    console.log(e.target.value);
     if (e.target.value.trim() === "") {
       //setSearching(false);
       dispatch(searchMap.get(searchKeyFetch)());
@@ -41,8 +42,9 @@ const SearchBar = ({ searchKeyFetch, searchKeyProp }) => {
   const onSearchSubmit = (e) => {
     //trigger search on enter key or button press
     if (
-      (e && e.key === "Enter") ||
-      (e && e.target.name === "searchButton" && searchterm && searchKeyProp)
+      ((e && e.key === "Enter") ||
+        (e && e.target.name === "searchButton" && searchKeyProp)) &&
+      searchterm.trim() !== ""
     ) {
       console.log(searchKeyProp);
       dispatch(searchMap.get(searchKeyProp)(searchterm.toLowerCase()));
