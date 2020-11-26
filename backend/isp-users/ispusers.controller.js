@@ -6,7 +6,7 @@ const validateRequest = require("_middleware/validate-request");
 const authorize = require("_middleware/authorize");
 const Role = require("_helpers/role");
 const ispUsersService = require("./ispusers.service");
-const { func } = require("prop-types");
+//const { func } = require("prop-types");
 const qs = require("qs");
 
 router.get("/users", authorize(Role.Admin), getAll);

@@ -21,6 +21,7 @@ import { globalActions } from "@/_actions/globalActions";
 import ReactPaginate from "react-paginate";
 import CurrencyFormat from "react-currency-format";
 import { SearchBar } from "@/_components";
+import DataHelper from "@/_helpers/excel-helper";
 
 export const Billing = ({ match }) => {
   const dispatch = useDispatch();
@@ -83,8 +84,6 @@ export const Billing = ({ match }) => {
 
   const onPaidChecked = (e, id) => {
     console.log("updating use account");
-    // console.log(e.checked);
-    // console.log(id);
     const userAcc = userAccounts.items.filter((ua) => ua.id === id)[0];
     console.log(userAcc);
     const userAccPost = {
@@ -121,6 +120,79 @@ export const Billing = ({ match }) => {
     "Month Bill Date",
   ];
 
+  const exportData = () => {
+    const dataHelper = new DataHelper();
+    dataHelper.exportData(userAccounts.items, "useraccount");
+  };
+
+  const renderUserAcc = (useracc) =>
+    useracc.map(
+      (
+        {
+          firstName,
+          lastName,
+          phoneNumber,
+          address,
+          comment,
+          paid,
+          amount,
+          billDate,
+          id,
+        },
+        index
+      ) => {
+        return (
+          <Table.Row className="useraccounts" key={index}>
+            <Table.Cell>{firstName}</Table.Cell>
+            <Table.Cell>{lastName}</Table.Cell>
+            <Table.Cell>
+              {parsePhoneNumber(phoneNumber, "LB").number}
+            </Table.Cell>
+            {/* <Table.Cell>{profile}</Table.Cell> */}
+            <Table.Cell>
+              <Checkbox
+                name="paid"
+                onChange={(e, event) => onPaidChecked(event, id)}
+                toggle
+                checked={paid}
+              />
+            </Table.Cell>
+            <Table.Cell>
+              <CurrencyFormat
+                value={amount}
+                displayType={"text"}
+                thousandSeparator={true}
+                prefix={"LBP"}
+              />
+            </Table.Cell>
+            <Table.Cell>{comment}</Table.Cell>
+            <Table.Cell>{billDate}</Table.Cell>
+            <Table.Cell style={{ whiteSpace: "nowrap" }}>
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <Button
+                  icon
+                  primary
+                  onClick={() => onEditUserAccModal(id)}
+                  className="btn btn-sm basicStyle mr-1"
+                >
+                  <Icon name="edit" />
+                </Button>
+                <Button
+                  onClick={(e) => deleteUserAcc(id, e)}
+                  icon
+                  className="useraccounts__button useraccounts__button-delete"
+                  disabled={isDeleting && id === selectedId}
+                  loading={isDeleting && id === selectedId}
+                >
+                  <Icon name="user delete" />
+                </Button>
+              </div>
+            </Table.Cell>
+          </Table.Row>
+        );
+      }
+    );
+
   return (
     <Container className="useraccounts" fluid>
       <Segment className="toolbar">
@@ -137,7 +209,7 @@ export const Billing = ({ match }) => {
           </List.Item>
           <List.Item>
             <List.Content>
-              <Button icon className="basicStyle">
+              <Button icon onClick={exportData} className="basicStyle">
                 <Icon name="file excel" /> Export Data
               </Button>
             </List.Content>
@@ -179,76 +251,7 @@ export const Billing = ({ match }) => {
                   ))}
                 </Table.Row>
               </Table.Header>
-              <Table.Body>
-                {userAccounts.items.map(
-                  (
-                    {
-                      firstName,
-                      lastName,
-                      phoneNumber,
-                      address,
-                      comment,
-                      paid,
-                      amount,
-                      billDate,
-                      id,
-                    },
-                    index
-                  ) => {
-                    return (
-                      <Table.Row className="useraccounts" key={index}>
-                        <Table.Cell>{firstName}</Table.Cell>
-                        <Table.Cell>{lastName}</Table.Cell>
-                        <Table.Cell>
-                          {parsePhoneNumber(phoneNumber, "LB").number}
-                        </Table.Cell>
-                        {/* <Table.Cell>{profile}</Table.Cell> */}
-                        <Table.Cell>
-                          <Checkbox
-                            name="paid"
-                            onChange={(e, event) => onPaidChecked(event, id)}
-                            toggle
-                            checked={paid}
-                          />
-                        </Table.Cell>
-                        <Table.Cell>
-                          <CurrencyFormat
-                            value={amount}
-                            displayType={"text"}
-                            thousandSeparator={true}
-                            prefix={"LBP"}
-                          />
-                        </Table.Cell>
-                        <Table.Cell>{comment}</Table.Cell>
-                        <Table.Cell>{billDate}</Table.Cell>
-                        <Table.Cell style={{ whiteSpace: "nowrap" }}>
-                          <div
-                            style={{ display: "flex", flexDirection: "row" }}
-                          >
-                            <Button
-                              icon
-                              primary
-                              onClick={() => onEditUserAccModal(id)}
-                              className="btn btn-sm basicStyle mr-1"
-                            >
-                              <Icon name="edit" />
-                            </Button>
-                            <Button
-                              onClick={(e) => deleteUserAcc(id, e)}
-                              icon
-                              className="useraccounts__button useraccounts__button-delete"
-                              disabled={isDeleting && id === selectedId}
-                              loading={isDeleting && id === selectedId}
-                            >
-                              <Icon name="user delete" />
-                            </Button>
-                          </div>
-                        </Table.Cell>
-                      </Table.Row>
-                    );
-                  }
-                )}
-              </Table.Body>
+              <Table.Body>{renderUserAcc(userAccounts.items)}</Table.Body>
             </Table>
           )}
         </div>
