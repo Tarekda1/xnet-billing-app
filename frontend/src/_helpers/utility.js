@@ -1,4 +1,5 @@
 import { store } from "react-notifications-component";
+import { v4 as uuidv4 } from "uuid";
 
 const formatDate = (date, format) => {
   console.log(date);
@@ -31,4 +32,21 @@ const showNotification = ({ title, message }) => {
   });
 };
 
-export { formatDate, getToken, clearToken, showNotification };
+const getUniqueId = () => uuidv4();
+
+const getFileNameWithDate = (fileName) => {
+  const dateNow = new Date();
+  //year-month-day
+  const formattedDate = `${dateNow.getFullYear()}-${
+    dateNow.getMonth() + 1
+  }-${dateNow.getDate()}`;
+  return `${fileName}-${formattedDate}`;
+};
+
+export {
+  getFileNameWithDate,
+  formatDate,
+  getToken,
+  clearToken,
+  showNotification,
+};

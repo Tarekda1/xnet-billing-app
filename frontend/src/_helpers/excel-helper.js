@@ -1,6 +1,7 @@
 import readXlsxFile from "read-excel-file";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
+import { getFileNameWithDate } from "./utility";
 
 export default class DataHelper {
   parseExcelFile = (filePath) => {
@@ -39,6 +40,6 @@ export default class DataHelper {
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: fileType });
-    FileSaver.saveAs(data, fileName + fileExtension);
+    FileSaver.saveAs(data, getFileNameWithDate(fileName) + fileExtension);
   };
 }
