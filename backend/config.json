@@ -1,6 +1,6 @@
 ﻿{
   "connectionStringCloud": "mongodb+srv://tarekda:tarek1234@cluster0.sn9ey.mongodb.net/xnetbilling?retryWrites=true&w=majority",
-  "connectionString": "mongodb://127.0.0.1:27017/xnetbilling",
+  "connectionString": "mongodb://mongo/xnetbilling",
   "secret": "my-secret-yara",
   "emailFrom": "tare2.da@gmail.com",
   "smtpOptions": {

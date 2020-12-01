@@ -111,16 +111,23 @@ function registerSchema(req, res, next) {
 }
 
 function register(req, res, next) {
-  console.log(req.get("origin"));
+  //console.log(`origin:${req}`);
+  console.log(`origin:${req.headers.host}`);
+  console.log(`origin:${req.headers.origin}`);
+  console.log(`origin:${req.get("origin")}`);
+  const origin =
+    req.get("origin") !== undefined ? req.get("origin") : req.headers.host;
+  console.log(`origin const:${origin}`);
+  console.log(`body const:${req.body}`);
   accountService
-    .register(req.body, req.get("origin"))
+    .register(req.body, origin)
     .then(() =>
       res.json({
         message:
           "Registration successful, please check your email for verification instructions",
       })
     )
-    .catch(next);
+    .catch((err) => res.json(err));
 }
 
 function verifyEmailSchema(req, res, next) {
