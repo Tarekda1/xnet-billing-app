@@ -1,11 +1,15 @@
 ﻿require("rootpath")();
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const errorHandler = require("_middleware/error-handler");
+
+//add morgin logger
+app.use(morgan("combined"));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

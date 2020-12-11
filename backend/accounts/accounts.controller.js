@@ -118,7 +118,7 @@ function register(req, res, next) {
   const origin =
     req.get("origin") !== undefined ? req.get("origin") : req.headers.host;
   console.log(`origin const:${origin}`);
-  console.log(`body const:${req.body}`);
+  console.log(`body const:${JSON.stringify(req.body)}`);
   accountService
     .register(req.body, origin)
     .then(() =>
