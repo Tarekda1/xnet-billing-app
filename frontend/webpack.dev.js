@@ -7,7 +7,7 @@ module.exports = merge(common, {
   mode: "development",
   output: {
     filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "build"),
     publicPath: "/",
   },
   plugins: [
@@ -18,7 +18,10 @@ module.exports = merge(common, {
   devServer: {
     publicPath: "/",
     historyApiFallback: true,
+    host: "0.0.0.0",
+    contentBase: "./build",
   },
+  devtool: "inline-source-map",
   module: {
     rules: [
       {

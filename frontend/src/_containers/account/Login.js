@@ -15,7 +15,7 @@ import * as Yup from "yup";
 import userActions from "@/_actions/userActions";
 import { useTranslation } from "react-i18next";
 import { accountService, alertService } from "@/_services";
-import logo from "@/images/xnet_logo_main.png";
+import logo from "../../images/xnet_logo_main.png";
 
 function Login({ history, location }) {
   const { t } = useTranslation();

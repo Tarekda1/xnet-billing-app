@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+  web-frontend:
+    container_name: docker-react
+    restart: always
+    build: .
+    volumes:
+      - ".:/app"
+      - "/app/node_modules"
+    ports:
+      - "80:80"
